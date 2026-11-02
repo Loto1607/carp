@@ -50,66 +50,70 @@ button{cursor:pointer}
 .rbtns button span{display:block;font-size:2.4rem}
 
 /* ---------- TV ---------- */
-#tv{height:100vh;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:1.2vh 1.4vw;padding:1.6vh 1.6vw;font-size:2.1vh;overflow:hidden}
-.tvhead{grid-column:1/3;display:flex;align-items:center;gap:2vw}
-.tvhead .brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:4.2vh;line-height:1}
-.tvhead .brand small{display:block;font-size:2vh;font-weight:500;color:var(--muted)}
-.tvclock{display:flex;align-items:center;gap:1.2vw;margin-left:auto}
-.tvhour{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:7vh;line-height:.9}
-.tvperiod{font-size:2.3vh;color:var(--muted);line-height:1.15}
-.conn{display:flex;align-items:center;gap:.6vw;font-size:2vh;padding:.6vh 1vw;border-radius:99px;background:var(--surface2);border:1px solid var(--line)}
-.conn i{width:1.4vh;height:1.4vh;border-radius:50%;background:var(--down)}
+#tv{height:100vh;display:grid;grid-template-columns:minmax(0,2.75fr) minmax(0,.95fr) repeat(3,minmax(0,.6fr));grid-template-rows:auto auto minmax(0,1fr);gap:1vh 1.2vw;padding:1.4vh 1.4vw;font-size:2vh;overflow:hidden}
+.tvhead{grid-column:1/-1;display:flex;align-items:center;gap:1.4vw;min-width:0}
+.tvhead .brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:3.6vh;line-height:1;white-space:nowrap}
+.tvhead .brand small{display:block;font-size:1.7vh;font-weight:500;color:var(--muted)}
+.tvclock{display:flex;align-items:center;gap:1vw;margin-left:auto}
+.tvhour{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:6.4vh;line-height:.9}
+.tvperiod{font-size:2vh;color:var(--muted);line-height:1.15;white-space:nowrap}
+.conn{display:flex;align-items:center;gap:.6vw;font-size:1.8vh;padding:.5vh .9vw;border-radius:99px;background:var(--surface2);border:1px solid var(--line);white-space:nowrap}
+.conn i{width:1.3vh;height:1.3vh;border-radius:50%;background:var(--down)}
 .conn.on i{background:var(--up)}
-.tvbars{grid-column:1/3}
+.crohead{display:flex;gap:.6vw;min-width:0}
+.crohead div{background:var(--surface);border:1px solid var(--line);border-radius:1.2vh;padding:.5vh .8vw;line-height:1.15;white-space:nowrap}
+.crohead .lead{background:var(--croSoft);border-color:var(--cro)}
+.crohead b{font-family:"Barlow Condensed",sans-serif;font-size:3vh;color:var(--cro);margin-right:.4vw}
+.crohead span{font-size:1.6vh;color:var(--muted)}
+.crohead div:not(.lead) b{color:var(--ink);font-size:2.6vh}
+.crohead em{display:block;font-style:normal;font-size:1.5vh;font-weight:600;color:var(--muted)}
+.crohead em.ok{color:var(--up)}
+.tvbars{grid-column:1/-1}
 .hours{display:flex;gap:.25vw}
-.hours span{flex:1;height:.8vh;border-radius:2px;background:var(--line)}
+.hours span{flex:1;height:.7vh;border-radius:2px;background:var(--line)}
 .hours span.n{background:color-mix(in srgb,var(--w2) 55%,var(--line))}
 .hours span.done{background:var(--ink);opacity:.5}
 .hours span.now{background:var(--cro);opacity:1}
-.progress{height:.5vh;background:var(--line);border-radius:2px;overflow:hidden;margin-top:.6vh}
+.progress{height:.45vh;background:var(--line);border-radius:2px;overflow:hidden;margin-top:.5vh}
 .progress i{display:block;height:100%;width:0;background:var(--gold)}
-.tvmap{min-height:0;display:flex;flex-direction:column;gap:1vh}
+.tvmap{min-height:0;display:flex;flex-direction:column;gap:1vh;position:relative}
 .mapwrap{flex:1;min-height:0;background:var(--bank);border-radius:1.6vh;overflow:hidden;border:1px solid var(--line);display:flex}
 .mapwrap svg{width:100%;height:100%;display:block}
-.tvticker{display:grid;grid-template-columns:repeat(4,1fr);gap:.8vw}
-.tvticker div{background:var(--surface);border:1px solid var(--line);border-radius:1.2vh;padding:.8vh 1vw;font-size:1.9vh;line-height:1.25;min-height:6.6vh}
+.tvticker{flex:1;min-height:0;display:flex;flex-direction:column;gap:.6vh;overflow:hidden}
+.tvticker h2{font-family:"Barlow Condensed",sans-serif;font-size:2.4vh;margin:.4vh 0 0}
+.tvticker div{flex:none;background:var(--surface);border:1px solid var(--line);border-radius:1.2vh;padding:.5vh .8vw;font-size:1.7vh;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tvticker div.cro{border-color:var(--cro)}
-.tvticker b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:2.8vh}
-.tvside{min-height:0;display:flex;flex-direction:column;gap:1.2vh}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:1.6vh;padding:1.2vh 1vw}
-.panel h2{font-family:"Barlow Condensed",sans-serif;margin:0 0 .6vh;font-size:2.8vh;line-height:1}
-.crosum{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.6vw}
-.crosum div{background:var(--surface2);border-radius:1vh;padding:.6vh .5vw;text-align:center;line-height:1.15}
-.crosum b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:3vh}
-.crosum span{font-size:1.6vh;color:var(--muted)}
-.crosum .lead{background:var(--croSoft)}
-.crosum .lead b{color:var(--cro)}
-.tablepanel{flex:1;min-height:0;display:flex;flex-direction:column}
-.tabdots{display:flex;gap:.4vw;margin-left:auto}
-.tabdots span{font-size:1.7vh;padding:.2vh .7vw;border-radius:99px;background:var(--surface2);color:var(--muted)}
-.tabdots span.on{background:var(--ink);color:var(--surface)}
-.tablehead{display:flex;align-items:center;gap:1vw;margin-bottom:.6vh}
-.tbl{flex:1;min-height:0;overflow:hidden}
+.tvticker b{font-family:"Barlow Condensed",sans-serif;font-size:2.6vh;margin-right:.6vw}
+.tvside{display:contents}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:1.4vh;padding:.9vh .7vw;min-height:0;overflow:hidden}
+.panel h2{font-family:"Barlow Condensed",sans-serif;margin:0 0 .4vh;font-size:2.4vh;line-height:1;display:flex;align-items:center;gap:.5vw}
+.panel h2 i{display:inline-block;width:1.2vh;height:1.2vh;border-radius:50%}
+
 table{width:100%;border-collapse:collapse}
-#tv table{font-size:1.45vh;line-height:1.2}
-th{text-align:left;font-weight:600;color:var(--muted);font-size:.85em;padding:0 .4vw .3vh}
-td{padding:.12vh .4vw;border-top:1px solid var(--line);white-space:nowrap}
+#tv table{font-size:1.42vh;line-height:1.2;table-layout:fixed;font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+#tv td{padding:.2vh .2vw}
+#tv th{padding:0 .2vw .2vh}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:.85em;padding:0 .3vw .2vh}
+td{padding:.12vh .3vw;border-top:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 td.r,th.r{text-align:right}
-td.name{overflow:hidden;text-overflow:ellipsis;max-width:0;width:100%}
+#tv table.nat col.c4{width:3em}#tv table.nat col.c5{width:4em}
+#tv col.c1{width:1.7em}#tv col.c2{width:2.7em}#tv col.c4{width:2.4em}#tv col.c5{width:3.4em}
 tr.cro td{background:var(--croSoft);font-weight:600}
 tr.cro td.name{color:var(--cro)}
+tr.gap td{border-top:none;text-align:center;color:var(--muted);padding:0;line-height:.9}
 .rk{font-family:"Barlow Condensed",sans-serif;font-weight:700}
 .dl{font-size:.85em}
 .dl.u{color:var(--up)}.dl.d{color:var(--down)}.dl.z{color:var(--muted)}
-.fl{display:inline-block;width:2.2vh;height:1.5vh;vertical-align:-.15vh;margin-right:.4vw;border-radius:2px;overflow:hidden}
+.fl{display:inline-block;width:2vh;height:1.35vh;vertical-align:-.15vh;margin-right:.35vw;border-radius:2px;overflow:hidden}
 @media (prefers-reduced-motion:no-preference){tr.flash td{animation:fl 1.6s ease-out}}
 @keyframes fl{from{background:color-mix(in srgb,var(--gold) 45%,transparent)}}
-.qrbox{display:flex;gap:1vw;align-items:center}
-.qrbox #qr{background:#fff;padding:.8vh;border-radius:1vh;line-height:0}
-.qrbox #qr img,.qrbox #qr canvas{width:16vh!important;height:16vh!important}
-.qrbox p{margin:.3vh 0;font-size:2vh}
-.code{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:5vh;letter-spacing:.2em;line-height:1}
-.tvmsg{position:fixed;inset:auto 0 4vh;display:flex;justify-content:center;pointer-events:none}
+.qrfloat{position:absolute;left:1vw;bottom:1vh;z-index:2;box-shadow:0 1vh 3vh rgba(0,0,0,.4)}
+.qrbox{display:flex;flex-direction:column;gap:1vh;align-items:center;text-align:center}
+.qrbox #qr{background:#fff;padding:.7vh;border-radius:1vh;line-height:0}
+.qrbox #qr img,.qrbox #qr canvas{width:14vh!important;height:14vh!important}
+.qrbox p{margin:.3vh 0;font-size:1.8vh}
+.code{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:4.6vh;letter-spacing:.2em;line-height:1}
+.tvmsg{position:fixed;inset:auto 0 4vh;display:flex;justify-content:center;pointer-events:none;z-index:4}
 .tvmsg div{background:var(--ink);color:var(--surface);padding:1.4vh 2vw;border-radius:1.4vh;font-size:2.6vh;font-weight:600}
 .final{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 90%,transparent);display:grid;place-items:center;z-index:5}
 .final .box{background:var(--surface);border:1px solid var(--line);border-radius:3vh;padding:4vh 4vw;text-align:center;min-width:50vw}
@@ -122,14 +126,14 @@ tr.cro td.name{color:var(--cro)}
 #lake{transition:fill .8s}
 #map.night #lake{fill:url(#wgn)}
 .peg circle{stroke:var(--surface);stroke-width:2}
-.peg text.n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:10px;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.peg text.n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:11px;fill:#fff;text-anchor:middle;dominant-baseline:central}
 .peg.cro circle{stroke:#fff;stroke-width:3}
 .flag{transform-box:fill-box;transform-origin:center;transition:transform .35s cubic-bezier(.2,1.5,.4,1)}
 .fbox{fill:none;stroke:rgba(0,0,0,.4);stroke-width:.8}
 .peg.cro .fbox{stroke:var(--cro);stroke-width:2.5}
 .peg.hit .flag{transform:scale(1.9);filter:drop-shadow(0 0 4px #fff)}
 .peg.hit .fbox{stroke:#fff;stroke-width:1.6}
-.ccode{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:9.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;opacity:.85}
+.ccode{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:11px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;opacity:.85}
 .peg.cro .ccode{fill:var(--cro);opacity:1}
 .seclabel{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;text-anchor:middle;dominant-baseline:central;opacity:.7}
 .ripple{fill:none;stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:rip 1.6s ease-out forwards}
@@ -179,6 +183,14 @@ tr.cro td.name{color:var(--cro)}
 .poslist{display:grid;gap:6px;margin-top:8px}
 .poslist div{background:var(--croSoft);border-radius:10px;padding:8px 10px;color:var(--cro);font-weight:600}
 .poslist span{color:var(--ink);font-weight:400}
+.teampick{display:grid;gap:8px;margin-top:8px}
+.teampick button{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:14px;text-align:left;font-weight:600;font-size:1.05rem}
+.teampick button span{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
+.teampick button.cro{color:var(--cro)}
+.readylist{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.readylist div{background:var(--surface2);border-radius:10px;padding:8px 6px;text-align:center;font-size:.85rem;line-height:1.25}
+.readylist div.ok{background:color-mix(in srgb,var(--up) 18%,var(--surface2));color:var(--up);font-weight:600}
+.linkbtn{border:none;background:none;color:var(--muted);text-decoration:underline;font-size:.85rem;padding:0}
 </style>
 </head>
 <body>
@@ -197,20 +209,22 @@ tr.cro td.name{color:var(--cro)}
 <section id="tv" hidden>
  <div class="tvhead">
   <div class="brand">Carp World Cup<small>Svjetsko prvenstvo u ribolovu šarana</small></div>
-  <div class="conn" id="tvConn"><i></i><span>Mobitel nije spojen</span></div>
-  <div class="tvclock"><div class="tvhour num" id="tvHour">12h</div><div class="tvperiod" id="tvPeriod">Prije starta</div></div>
+  <div class="crohead" id="tvCro"></div>
+  <div class="tvclock"><div class="conn" id="tvConn"><i></i><span>Mobitel nije spojen</span></div><div class="tvhour num" id="tvHour">12h</div><div class="tvperiod" id="tvPeriod">Prije starta</div></div>
  </div>
  <div class="tvbars"><div class="hours" id="tvHours"></div><div class="progress"><i id="tvProg"></i></div></div>
  <div class="tvmap">
-  <div class="mapwrap"><svg id="map" viewBox="-30 -30 1060 700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Karta jezera"></svg></div>
-  <div class="tvticker" id="tvTicker"></div>
- </div>
- <div class="tvside">
-  <div class="panel" id="tvQr">
+  <div class="mapwrap"><svg id="map" viewBox="-20 -30 1040 1130" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Karta jezera"></svg></div>
+  <div class="tvticker" id="tvTicker" hidden></div>
+  <div class="panel qrfloat" id="tvQr">
    <div class="qrbox"><div id="qr"></div><div><p>Skenirajte mobitelom ili upišite kod:</p><div class="code num" id="tvCode">-----</div><p class="muted" id="tvNet">Spajanje na mrežu…</p></div></div>
   </div>
-  <div class="panel"><h2>Hrvatska</h2><div class="crosum" id="tvCro"></div></div>
-  <div class="panel tablepanel"><div class="tablehead"><h2 id="tvTblTitle" style="margin:0">Države</h2><div class="tabdots" id="tvDots"></div></div><div class="tbl" id="tvTbl"></div></div>
+ </div>
+ <div class="tvside">
+  <div class="panel"><h2>Poredak država</h2><div id="tvN"></div></div>
+  <div class="panel"><h2><i style="background:var(--A)"></i>Sektor A</h2><div id="tvA"></div></div>
+  <div class="panel"><h2><i style="background:var(--B)"></i>Sektor B</h2><div id="tvB"></div></div>
+  <div class="panel"><h2><i style="background:var(--C)"></i>Sektor C</h2><div id="tvC"></div></div>
  </div>
  <div class="tvmsg" id="tvMsg" hidden><div></div></div>
  <div class="final" id="tvFinal" hidden></div>
@@ -276,7 +290,7 @@ const FLAGS={
  LUX:hz("#EF3340","#fff","#00A3E0")
 };
 
-const LAKE="M160 330C140 175 300 85 470 110C590 128 640 72 765 80C905 92 935 212 872 300C820 372 905 445 852 522C790 602 622 562 520 547C418 532 360 604 238 562C128 524 172 432 160 330Z";
+const LAKE="M500 70C680 60 860 140 880 300C895 420 800 470 830 580C870 720 900 860 760 950C640 1025 470 990 360 1000C220 1012 110 940 120 800C128 690 210 640 180 520C150 400 90 300 170 180C240 90 370 75 500 70Z";
 
 /* ===================== IGRA (radi na televizoru) ===================== */
 // kvaliteta polja kao u Excelu (ispravljeno: noću se gleda noćna vrijednost)
@@ -310,7 +324,7 @@ function simulateHour(h){
 }
 function saveState(){store(KEY_STATE,S)}
 function newGame(){stopTimer();S={phase:"drawn",hour:-1,teams:draw(),catches:[],pending:[],startedAt:0,snaps:[]};tickerItems=[];lastRanks={};saveState()}
-function startHour(h){S.hour=h;S.phase="hour";S.snaps[h]=rankSnapshot();S.pending=simulateHour(h);S.startedAt=Date.now();saveState();runTimer()}
+function startHour(h){S.hour=h;S.phase="hour";S.ready={1:false,2:false,3:false};S.readySince=0;S.snaps[h]=rankSnapshot();S.pending=simulateHour(h);S.startedAt=Date.now();saveState();runTimer()}
 function finishHour(){
   S.pending.forEach(e=>applyCatch(e,false));S.pending=[];
   if(S.hour>=23){S.phase="done";stopTimer();saveState();return}
@@ -319,7 +333,7 @@ function finishHour(){
 function applyCatch(e,animate){
   S.catches.push({t:e.t,h:S.hour,kg:e.kg,rod:e.rod});
   if(animate)animateCatch(S.teams[e.t],e.kg);
-  tickerItems.unshift({t:e.t,kg:e.kg,h:S.hour});tickerItems=tickerItems.slice(0,4);
+  tickerItems.unshift({t:e.t,kg:e.kg,h:S.hour});tickerItems=tickerItems.slice(0,8);
 }
 function runTimer(){
   stopTimer();
@@ -328,11 +342,15 @@ function runTimer(){
     while(S.pending.length&&S.pending[0].at<=el){applyCatch(S.pending.shift(),true);changed=true}
     $("tvProg").style.width=Math.min(100,el/ROUND_MS*100)+"%";
     if(changed){saveState();renderTvData();broadcastSoon()}
-    if(el>=ROUND_MS&&!S.pending.length){stopTimer();$("tvProg").style.width="100%";broadcastSoon()}
+    if(allReady()&&!S.pending.length){
+      if(!S.readySince)S.readySince=Date.now();
+      if(Date.now()-S.readySince>2000){finishHour();if(S.phase==="done")toast("Natjecanje je završeno");else toast(`Počinje ${HOURS[S.hour]}`);renderTv();broadcast();return}
+    } else if(el>=ROUND_MS&&!S.pending.length){stopTimer();$("tvProg").style.width="100%";broadcastSoon()}
   };
   tick();timer=setInterval(tick,200);
 }
 function stopTimer(){if(timer)clearInterval(timer);timer=null}
+const allReady=()=>!!(S&&S.phase==="hour"&&S.ready&&[1,2,3].every(n=>S.ready[n]));
 function computeRanks(){
   const n=S.teams.length,kg=new Array(n).fill(0),fish=new Array(n).fill(0);
   S.catches.forEach(c=>{kg[c.t]+=c.kg;fish[c.t]++});
@@ -363,17 +381,23 @@ function handleCmd(m){
       if(!t||t.cpu||!(kg>0&&kg<=40)||![1,2,3].includes(m.rod))break;
       if(S.catches.some(c=>c.t===t.id&&c.h===S.hour&&c.rod===m.rod))break;
       applyCatch({t:t.id,kg,rod:m.rod},true);saveState();break}
-    case "del": if(ph==="hour"){S.catches=S.catches.filter(c=>!(c.t===m.t&&c.h===S.hour&&c.rod===m.rod));tickerItems=S.catches.slice(-4).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));saveState()} break;
+    case "ready":{
+      if(ph!=="hour")break;S.ready=S.ready||{};
+      const ns=m.n==="all"?[1,2,3]:[+m.n];if(!ns.every(n=>[1,2,3].includes(n)))break;
+      ns.forEach(n=>S.ready[n]=!!m.val);S.readySince=0;saveState();
+      if(allReady()){toast(S.pending.length?"Svi su gotovi, čekaju se ostali ulovi":"Svi su gotovi");if(!timer)runTimer()}
+      break}
+    case "del": if(ph==="hour"){S.catches=S.catches.filter(c=>!(c.t===m.t&&c.h===S.hour&&c.rod===m.rod));tickerItems=S.catches.slice(-8).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));saveState()} break;
   }
   renderTv();broadcast();
 }
 function phoneState(){
   if(!S)return{phase:"none"};
   const R=computeRanks();const nat=R.nat.find(x=>x.ci===0);
-  const cro=S.teams.filter(t=>!t.cpu).map(t=>({id:t.id,name:tName(t),lake:t.lake,peg:t.peg,sec:t.sec,place:R.team[t.id].place,kg:R.kg[t.id],fish:R.fish[t.id],
+  const cro=S.teams.filter(t=>!t.cpu).map(t=>({id:t.id,n:t.n,name:tName(t),lake:t.lake,peg:t.peg,sec:t.sec,place:R.team[t.id].place,kg:R.kg[t.id],fish:R.fish[t.id],
     rods:[1,2,3].map(r=>{const c=S.catches.find(x=>x.t===t.id&&x.h===S.hour&&x.rod===r);return c?c.kg:null})}));
   const top=R.nat.map((x,i)=>({r:i+1,code:COUNTRIES[x.ci][0],name:COUNTRIES[x.ci][1],pts:x.pts,kg:x.kg,cro:x.ci===0}));
-  return{phase:S.phase,hour:S.hour,pending:S.pending.length,nat:{rank:R.natRank[0],pts:nat.pts,kg:nat.kg,fish:nat.fish},cro,top};
+  return{phase:S.phase,hour:S.hour,pending:S.pending.length,ready:S.ready||{},nat:{rank:R.natRank[0],pts:nat.pts,kg:nat.kg,fish:nat.fish},cro,top};
 }
 
 /* ===================== MREŽA ===================== */
@@ -415,24 +439,24 @@ function buildMap(){
   const svg=$("map");
   svg.innerHTML=`<defs><radialGradient id="wg" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="var(--w1)"/><stop offset="1" stop-color="var(--w2)"/></radialGradient>
   <radialGradient id="wgn" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="#1A3F5C"/><stop offset="1" stop-color="#081826"/></radialGradient>${Object.keys(FLAGS).map(k=>`<symbol id="f-${k}" viewBox="0 0 30 20" preserveAspectRatio="none">${FLAGS[k]}</symbol>`).join("")}</defs>
-  <rect x="-30" y="-30" width="1060" height="700" fill="var(--bank)"/>
+  <rect x="-20" y="-30" width="1040" height="1130" fill="var(--bank)"/>
   <path id="lake" d="${LAKE}" fill="url(#wg)" stroke="var(--reed)" stroke-width="10" stroke-linejoin="round"/>
   <g id="secarcs"></g>
-  <g><ellipse cx="560" cy="335" rx="58" ry="30" fill="var(--bank)" stroke="var(--reed)" stroke-width="5"/><circle cx="545" cy="328" r="11" fill="var(--reed)"/><circle cx="572" cy="333" r="9" fill="var(--reed)"/></g>
+  <g><ellipse cx="500" cy="560" rx="62" ry="40" fill="var(--bank)" stroke="var(--reed)" stroke-width="5"/><circle cx="484" cy="552" r="13" fill="var(--reed)"/><circle cx="514" cy="558" r="10" fill="var(--reed)"/></g>
   <g id="secl"></g><g id="pegs"></g><g id="fx"></g>`;
   const lake=$("lake"),L=lake.getTotalLength();
   $("secarcs").innerHTML=SECT.map((s,k)=>`<path d="${LAKE}" fill="none" stroke="var(--${s})" stroke-width="5" stroke-dasharray="${L/3-6} ${L}" stroke-dashoffset="${-(k*L/3+3)}"/>`).join("");
-  const inside=(x,y)=>{try{const p=svg.createSVGPoint();p.x=x;p.y=y;return lake.isPointInFill(p)}catch(e){return Math.hypot(x-520,y-330)<200}};
+  const inside=(x,y)=>{try{const p=svg.createSVGPoint();p.x=x;p.y=y;return lake.isPointInFill(p)}catch(e){return Math.hypot(x-500,y-540)<250}};
   const at=(s,off)=>{const a=lake.getPointAtLength((s+L)%L),b=lake.getPointAtLength((s+L-2)%L),c=lake.getPointAtLength((s+2)%L);
     let nx=c.y-b.y,ny=-(c.x-b.x);const m=Math.hypot(nx,ny)||1;nx/=m;ny/=m;if(inside(a.x+nx*6,a.y+ny*6)){nx=-nx;ny=-ny}
     return{x:a.x+nx*off,y:a.y+ny*off,wx:a.x-nx*42,wy:a.y-ny*42}};
-  PEGPOS=[];for(let i=0;i<90;i++){const s=(i+.5)/90*L;PEGPOS.push({...at(s,18),f:at(s,42),k:at(s,59)})}
-  $("secl").innerHTML=SECT.map((s,k)=>{const p=at((k+.5)/3*L,-75);return `<text class="seclabel" x="${p.x}" y="${p.y}" fill="var(--${s})">${s}</text>`}).join("");
+  PEGPOS=[];for(let i=0;i<90;i++){const s=(i+.5)/90*L;PEGPOS.push({...at(s,19),f:at(s,46),k:at(s,67)})}
+  $("secl").innerHTML=SECT.map((s,k)=>{const p=at((k+.5)/3*L,-90);return `<text class="seclabel" x="${p.x}" y="${p.y}" fill="var(--${s})">${s}</text>`}).join("");
 }
 function renderPegs(){
   const byLake={};if(S&&S.teams)S.teams.forEach(t=>byLake[t.lake]=t);
   $("pegs").innerHTML=PEGPOS.map((p,i)=>{const lake=i+1,t=byLake[lake],cro=t&&!t.cpu;
-    return `<g class="peg ${cro?"cro":""}" data-l="${lake}"><circle cx="${p.x}" cy="${p.y}" r="10" fill="${cro?"var(--cro)":`var(--${sectorOf(lake)})`}"/><text class="n" x="${p.x}" y="${p.y}">${lake}</text>${t?`<g class="flag"><use href="#f-${COUNTRIES[t.c][0]}" x="${p.f.x-12}" y="${p.f.y-8}" width="24" height="16"/><rect class="fbox" x="${p.f.x-12}" y="${p.f.y-8}" width="24" height="16"/></g><text class="ccode" x="${p.k.x}" y="${p.k.y}">${COUNTRIES[t.c][0]}</text>`:""}</g>`}).join("");
+    return `<g class="peg ${cro?"cro":""}" data-l="${lake}"><circle cx="${p.x}" cy="${p.y}" r="11.5" fill="${cro?"var(--cro)":`var(--${sectorOf(lake)})`}"/><text class="n" x="${p.x}" y="${p.y}">${lake}</text>${t?`<g class="flag"><use href="#f-${COUNTRIES[t.c][0]}" x="${p.f.x-14}" y="${p.f.y-9.5}" width="28" height="19"/><rect class="fbox" x="${p.f.x-14}" y="${p.f.y-9.5}" width="28" height="19"/></g><text class="ccode" x="${p.k.x}" y="${p.k.y}">${COUNTRIES[t.c][0]}</text>`:""}</g>`}).join("");
 }
 function animateCatch(t,kg){
   const p=PEGPOS[t.lake-1];if(!p)return;const cro=!t.cpu;
@@ -457,31 +481,25 @@ function renderTvHeader(){
   if(!S||S.phase!=="hour")$("tvProg").style.width="0";
 }
 function renderTvData(){
-  // Hrvatska
-  if(!S||!S.teams){$("tvCro").innerHTML=`<div class="lead" style="grid-column:1/5"><span>Izvlačenje pokrenite s mobitela.</span></div>`;$("tvTbl").innerHTML="";$("tvTicker").innerHTML="";return}
+  if(!S||!S.teams){$("tvCro").innerHTML=`<div class="lead"><span>Izvlačenje pokrenite s mobitela</span></div>`;["tvN","tvA","tvB","tvC"].forEach(id=>$(id).innerHTML="");$("tvTicker").innerHTML="";return}
   const R=computeRanks(),n=R.nat.find(x=>x.ci===0);
-  $("tvCro").innerHTML=`<div class="lead"><b class="num">${R.natRank[0]}.</b><span>${n.pts.toLocaleString("hr-HR")} bod., ${fmt(n.kg)} kg</span></div>`+
-    S.teams.filter(t=>!t.cpu).map(t=>`<div><b class="num">${R.team[t.id].place}.</b><span>Sektor ${t.sec}, ${fmt(R.kg[t.id])} kg</span></div>`).join("");
-  // ticker
-  $("tvTicker").innerHTML=[0,1,2,3].map(i=>{const e=tickerItems[i];if(!e)return `<div class="muted">${i===0?"Još nema ulova":""}</div>`;const t=S.teams[e.t];
+  $("tvCro").innerHTML=`<div class="lead">${flagHTML("CRO")}<b class="num">${R.natRank[0]}.</b><span>Hrvatska</span><em>${n.pts.toLocaleString("hr-HR")} bodova, ${fmt(n.kg)} kg</em></div>`+
+    S.teams.filter(t=>!t.cpu).map(t=>{const rd=S.phase==="hour"&&S.ready&&S.ready[t.n];
+      return `<div><b class="num">${R.team[t.id].place}.</b><span>Croatia ${t.n}, sektor ${t.sec}</span>${S.phase==="hour"?`<em class="${rd?"ok":""}">${rd?"✓ Gotov":"Baca kockice"}, ${fmt(R.kg[t.id])} kg</em>`:`<em>${fmt(R.kg[t.id])} kg</em>`}</div>`}).join("");
+  $("tvTicker").innerHTML=`<h2>Zadnji ulovi</h2>`+(tickerItems.length?"":`<div class="muted">Još nema ulova</div>`)+[0,1,2,3,4,5,6,7].map(i=>{const e=tickerItems[i];if(!e)return "";const t=S.teams[e.t];
     return `<div class="${t.cpu?"":"cro"}"><b class="num">${fmt(e.kg)} kg</b>${flagHTML(COUNTRIES[t.c][0])}${esc(tName(t))}<br><span class="muted">${HOURS[e.h]}, mjesto ${t.lake}</span></div>`}).join("");
-  renderTvTable(R);
+  renderTvTables(R);
 }
-function renderTvTable(R){
-  R=R||computeRanks();
-  const v=VIEWS[tblView];const base=S.snaps[Math.max(0,S.hour-1)]||null;
-  $("tvTblTitle").textContent=v==="N"?"Poredak država":"Sektor "+v;
-  $("tvDots").innerHTML=VIEWS.map((x,i)=>`<span class="${i===tblView?"on":""}">${x==="N"?"Države":x}</span>`).join("");
-  const delta=(now,prev)=>{if(prev==null||S.phase==="drawn")return `<td class="dl z">–</td>`;const d=prev-now;return d>0?`<td class="dl u">▲${d}</td>`:d<0?`<td class="dl d">▼${-d}</td>`:`<td class="dl z">–</td>`};
-  let h="";
-  if(v==="N"){
-    h=`<table><thead><tr><th>#</th><th></th><th>Država</th><th class="r">Bod.</th><th class="r">kg</th></tr></thead><tbody>`+R.nat.map((x,i)=>{const k="n"+x.ci,fl=lastRanks[k]&&lastRanks[k]!==i+1;lastRanks[k]=i+1;
-      return `<tr class="${x.ci===0?"cro":""} ${fl?"flash":""}"><td class="rk num">${i+1}</td>${delta(i+1,base&&base.n[x.ci])}<td class="name">${flagHTML(COUNTRIES[x.ci][0])}${COUNTRIES[x.ci][1]}</td><td class="r num">${x.pts.toLocaleString("hr-HR")}</td><td class="r num">${fmt(x.kg)}</td></tr>`}).join("")+`</tbody></table>`;
-  } else {
-    h=`<table><thead><tr><th>#</th><th></th><th>Tim</th><th class="r">Mj.</th><th class="r">Ribe</th><th class="r">kg</th></tr></thead><tbody>`+R.sector[v].map(t=>{const pl=R.team[t.id].place,k="t"+t.id,fl=lastRanks[k]&&lastRanks[k]!==pl;lastRanks[k]=pl;
-      return `<tr class="${t.cpu?"":"cro"} ${fl?"flash":""}"><td class="rk num">${pl}</td>${delta(pl,base&&base.t[t.id])}<td class="name">${flagHTML(COUNTRIES[t.c][0])}${esc(tName(t))}</td><td class="r num">${t.lake}</td><td class="r num">${R.fish[t.id]}</td><td class="r num">${fmt(R.kg[t.id])}</td></tr>`}).join("")+`</tbody></table>`;
+const SECTOR_TOP=8;
+function renderTvTables(R){
+  const flashCls=(k,v)=>{const f=lastRanks[k]&&lastRanks[k]!==v;lastRanks[k]=v;return f?"flash":""};
+  $("tvN").innerHTML=`<table class="nat"><colgroup><col class="c1"><col><col class="c4"><col class="c5"></colgroup><thead><tr><th>#</th><th>Država</th><th class="r">Bod.</th><th class="r">kg</th></tr></thead><tbody>`+
+    R.nat.map((x,i)=>`<tr class="${x.ci===0?"cro":""} ${flashCls("n"+x.ci,i+1)}"><td class="rk num">${i+1}</td><td class="name">${flagHTML(COUNTRIES[x.ci][0])}${COUNTRIES[x.ci][1]}</td><td class="r num">${x.pts.toLocaleString("hr-HR")}</td><td class="r num">${fmt(x.kg)}</td></tr>`).join("")+`</tbody></table>`;
+  for(const s of SECT){
+    $("tv"+s).innerHTML=`<table><colgroup><col class="c1"><col><col class="c5"></colgroup><thead><tr><th>#</th><th>Tim</th><th class="r">kg</th></tr></thead><tbody>`+R.sector[s].map(t=>{
+      const pl=R.team[t.id].place;
+      return `<tr class="${t.cpu?"":"cro"} ${flashCls("t"+t.id,pl)}"><td class="rk num">${pl}</td><td class="name">${flagHTML(COUNTRIES[t.c][0])}${COUNTRIES[t.c][0]} ${t.n}</td><td class="r num">${fmt(R.kg[t.id])}</td></tr>`}).join("")+`</tbody></table>`;
   }
-  $("tvTbl").innerHTML=h;
 }
 function renderTvFinal(){
   const f=$("tvFinal");
@@ -497,15 +515,14 @@ function initTv(){
   $("tv").hidden=false;
   buildMap();
   try{S=JSON.parse(fetchStore(KEY_STATE)||"null")}catch(e){S=null}
-  if(S&&S.catches)tickerItems=S.catches.slice(-4).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));
+  if(S&&S.catches)tickerItems=S.catches.slice(-8).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));
   renderTv();
   if(S&&S.phase==="hour")runTimer();
-  setInterval(()=>{if(!S||!S.teams)return;tblView=(tblView+1)%VIEWS.length;renderTvTable()},12000);
   startHost();
 }
 
 /* ===================== MOBITEL ===================== */
-let mPeer=null,mConn=null,MS=null,mCode=null,retryT=null,sent={};
+let mPeer=null,mConn=null,MS=null,mCode=null,retryT=null,sent={},myTeam=fetchStore("carpwc-team")||"";
 function initMob(code){
   $("mob").hidden=false;
   mCode=code||fetchStore(KEY_LASTCODE);
@@ -534,6 +551,10 @@ function connectMob(){
   });
   mPeer.on("disconnected",()=>{setTimeout(()=>{try{mPeer.reconnect()}catch(e){}},2000)});
 }
+function teamPickHTML(inner){
+  const b=`<h2>Koji tim upisuje ovaj mobitel?</h2><div class="teampick">${(MS.cro||[]).map(t=>`<button class="cro" data-team="${t.n}">${esc(t.name)}<span>Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></button>`).join("")}<button data-team="all">Sva tri tima<span>Kad igrate s jednim mobitelom</span></button></div>`;
+  return inner?`<div style="margin-top:12px">${b}</div>`:`<div class="card">${b}</div>`;
+}
 function send(cmd){if(mConn&&mConn.open){mConn.send({type:"cmd",...cmd});return true}alert("Mobitel nije spojen s TV-om.");return false}
 function renderMob(note){
   const b=$("mBody");
@@ -548,15 +569,25 @@ function renderMob(note){
     x=`<div class="card"><h2>Novo natjecanje</h2><p>30 reprezentacija, 90 timova i 24 sata ribolova. Izvlačenje dodjeljuje svakoj državi po jednu poziciju u sektorima A, B i C.</p><button class="btn" data-cmd="draw">Izvuci pozicije</button></div>`;
   } else if(MS.phase==="drawn"){
     x=`<div class="card"><h2>Pozicije Hrvatske</h2><div class="poslist">${MS.cro.map(t=>`<div>${esc(t.name)}<br><span>Mjesto ${t.lake}, ploča PEG ${t.peg}, sektor ${t.sec}</span></div>`).join("")}</div>
+    ${myTeam?`<p class="muted">Ovaj mobitel: ${myTeam==="all"?"sva tri tima":"CT Croatia "+myTeam}. <button class="linkbtn" id="chTeam">Promijeni</button></p>`:teamPickHTML(true)}
     <button class="btn" data-cmd="start">Počni natjecanje (12h)</button><button class="btn sec" data-cmd="draw" data-confirm="Izvući pozicije ponovno?">Izvuci ponovno</button></div>`;
+  } else if(MS.phase==="hour"&&!myTeam){
+    x=teamPickHTML();
   } else if(MS.phase==="hour"){
-    x=`<div class="card"><h2>Upis za ${HOURS[h]}</h2>`+MS.cro.map(t=>`<div class="team"><div class="thead"><span class="tname">${esc(t.name)}</span><span class="tmeta">Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></div>`+
+    const mine=myTeam==="all"?MS.cro:MS.cro.filter(t=>t.n===+myTeam);
+    const rd=MS.ready||{},waiting=MS.cro.filter(t=>!rd[t.n]);
+    x=`<div class="card"><div class="thead"><h2>Upis za ${HOURS[h]}</h2><button class="linkbtn" id="chTeam">Promijeni tim</button></div>`+mine.map(t=>`<div class="team"><div class="thead"><span class="tname">${esc(t.name)}</span><span class="tmeta">Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></div>`+
       t.rods.map((kg,ri)=>{const r=ri+1,k=t.id+"_"+r;
-        if(kg!=null)return `<div class="rod"><label>Štap ${r}</label><div class="done"><span class="num">${fmt(kg)} kg</span><button data-del="${k}">Ukloni</button></div></div>`;
+        if(kg!=null)return `<div class="rod"><label>Štap ${r}</label><div class="done"><span class="num">${fmt(kg)} kg</span>${rd[t.n]?"":`<button data-del="${k}">Ukloni</button>`}</div></div>`;
+        if(rd[t.n])return `<div class="rod"><label>Štap ${r}</label><div class="wait">Bez ulova</div></div>`;
         if(sent[k])return `<div class="rod"><label>Štap ${r}</label><div class="wait">Šaljem na TV…</div></div>`;
         return `<div class="rod"><label for="w${k}">Štap ${r}</label><input id="w${k}" inputmode="decimal" placeholder="kg, npr. 14,37" autocomplete="off"><button class="ok" data-add="${k}">Upiši</button></div><div class="err" id="e${k}"></div>`}).join("")+`</div>`).join("")+
-      `<p class="muted" style="font-size:.85rem">Upišite težinu samo za štap na kojem je riba izvučena.</p></div>`+
-      `<button class="btn" data-cmd="next" ${MS.pending?`data-confirm="CPU ulovi se još prikazuju na TV-u (${MS.pending}). Završiti sat odmah?"`:""}>${h===23?"Završi natjecanje":`Završi sat, kreni u ${HOURS[h+1]}`}</button>`;
+      `<p class="muted" style="font-size:.85rem">Upišite težinu samo za štap na kojem je riba izvučena, pa potvrdite da ste gotovi.</p></div>`;
+    const meDone=mine.every(t=>rd[t.n]);
+    x+=`<div class="card"><h2>${h===23?"Kraj natjecanja":"Sljedeći sat"}</h2><div class="readylist">${MS.cro.map(t=>`<div class="${rd[t.n]?"ok":""}">Croatia ${t.n}<br>${rd[t.n]?"✓ Gotov":"Baca kockice"}</div>`).join("")}</div>`+
+      (meDone?`<p class="muted">${waiting.length?`Čeka se: ${waiting.map(t=>"Croatia "+t.n).join(", ")}.`:MS.pending?"Svi su gotovi. Novi sat kreće čim TV pokaže ostale ulove.":"Svi su gotovi, novi sat upravo kreće."}</p><button class="btn sec" data-ready="0">Ipak nisam gotov</button>`
+      :`<button class="btn" data-ready="1">${myTeam==="all"?"Gotovi smo, sva tri tima":"Gotov sam s bacanjem"}</button>`)+
+      `<p class="muted" style="font-size:.85rem">${h===23?"Natjecanje završava":`${HOURS[h+1]} počinje`} kad sva tri tima potvrde.</p></div>`;
   } else if(MS.phase==="done"){
     x=`<div class="card"><h2>Natjecanje je završeno</h2><p>Hrvatska je na <b>${MS.nat.rank}. mjestu</b>.</p><button class="btn sec" data-cmd="draw" data-confirm="Započeti novo natjecanje? Rezultati ovog natjecanja bit će obrisani.">Novo natjecanje</button></div>`;
   }
@@ -575,6 +606,9 @@ function renderMob(note){
     const go=()=>{const v=parseFloat(inp.value.replace(",",".").trim());if(!(v>0&&v<=40)){$("e"+k).textContent="Upišite težinu između 0,01 i 40 kg.";return}
       if(send({action:"add",t,rod:r,kg:Math.round(v*100)/100})){sent[k]=true;renderMob()}};
     el.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()}});
+  b.querySelectorAll("[data-team]").forEach(el=>el.onclick=()=>{myTeam=el.dataset.team;store("carpwc-team",myTeam);renderMob()});
+  const ch=$("chTeam");if(ch)ch.onclick=()=>{myTeam="";store("carpwc-team","");renderMob()};
+  b.querySelectorAll("[data-ready]").forEach(el=>el.onclick=()=>send({action:"ready",n:myTeam==="all"?"all":+myTeam,val:el.dataset.ready==="1"}));
   b.querySelectorAll("[data-del]").forEach(el=>{const [t,r]=el.dataset.del.split("_").map(Number);el.onclick=()=>send({action:"del",t,rod:r})});
 }
 
