@@ -187,6 +187,9 @@ tr.gap td{border-top:none;text-align:center;color:var(--muted);padding:0;line-he
 .teampick button{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:14px;text-align:left;font-weight:600;font-size:1.05rem}
 .teampick button span{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
 .teampick button.cro{color:var(--cro)}
+.teampick button{position:relative}
+.teampick button.sel{border:2px solid var(--cro);background:var(--croSoft)}
+.teampick button.sel::after{content:"✓";position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.4rem;color:var(--cro)}
 .readylist{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
 .readylist div{background:var(--surface2);border-radius:10px;padding:8px 6px;text-align:center;font-size:.85rem;line-height:1.25}
 .readylist div.ok{background:color-mix(in srgb,var(--up) 18%,var(--surface2));color:var(--up);font-weight:600}
@@ -383,10 +386,13 @@ function handleCmd(m){
       applyCatch({t:t.id,kg,rod:m.rod},true);saveState();break}
     case "ready":{
       if(ph!=="hour")break;S.ready=S.ready||{};
-      const ns=m.n==="all"?[1,2,3]:[+m.n];if(!ns.every(n=>[1,2,3].includes(n)))break;
+      const ns=m.n==="all"?[1,2,3]:Array.isArray(m.n)?m.n.map(Number):[+m.n];if(!ns.every(n=>[1,2,3].includes(n)))break;
       ns.forEach(n=>S.ready[n]=!!m.val);S.readySince=0;saveState();
       if(allReady()){toast(S.pending.length?"Svi su gotovi, čekaju se ostali ulovi":"Svi su gotovi");if(!timer)runTimer()}
       break}
+    case "reset":{
+      stopTimer();S=null;try{localStorage.removeItem(KEY_STATE)}catch(e){}
+      tickerItems=[];lastRanks={};pegsKey="";$("tvProg").style.width="0";toast("Natjecanje je prekinuto");break}
     case "del": if(ph==="hour"){S.catches=S.catches.filter(c=>!(c.t===m.t&&c.h===S.hour&&c.rod===m.rod));tickerItems=S.catches.slice(-8).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));saveState()} break;
   }
   renderTv();broadcast();
@@ -522,7 +528,9 @@ function initTv(){
 }
 
 /* ===================== MOBITEL ===================== */
-let mPeer=null,mConn=null,MS=null,mCode=null,retryT=null,sent={},myTeam=fetchStore("carpwc-team")||"";
+let mPeer=null,mConn=null,MS=null,mCode=null,retryT=null,sent={},myTeam=fetchStore("carpwc-team")||"",pickSel=new Set();
+const myTeams=()=>myTeam==="all"?[1,2,3]:myTeam.split(",").map(Number).filter(n=>n>=1&&n<=3);
+const teamsLabel=ns=>ns.length===3?"sva tri tima":ns.length===2?`CT Croatia ${ns[0]} i ${ns[1]}`:`CT Croatia ${ns[0]}`;
 function initMob(code){
   $("mob").hidden=false;
   mCode=code||fetchStore(KEY_LASTCODE);
@@ -552,7 +560,7 @@ function connectMob(){
   mPeer.on("disconnected",()=>{setTimeout(()=>{try{mPeer.reconnect()}catch(e){}},2000)});
 }
 function teamPickHTML(inner){
-  const b=`<h2>Koji tim upisuje ovaj mobitel?</h2><div class="teampick">${(MS.cro||[]).map(t=>`<button class="cro" data-team="${t.n}">${esc(t.name)}<span>Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></button>`).join("")}<button data-team="all">Sva tri tima<span>Kad igrate s jednim mobitelom</span></button></div>`;
+  const b=`<h2>Koje timove upisuje ovaj mobitel?</h2><p class="muted" style="margin:0">Izaberite jedan, dva ili sva tri.</p><div class="teampick">${(MS.cro||[]).map(t=>`<button class="cro ${pickSel.has(t.n)?"sel":""}" data-pick="${t.n}" aria-pressed="${pickSel.has(t.n)}">${esc(t.name)}<span>Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></button>`).join("")}</div><button class="btn sec" id="pickOk" ${pickSel.size?"":"disabled"}>Potvrdi odabir</button>`;
   return inner?`<div style="margin-top:12px">${b}</div>`:`<div class="card">${b}</div>`;
 }
 function send(cmd){if(mConn&&mConn.open){mConn.send({type:"cmd",...cmd});return true}alert("Mobitel nije spojen s TV-om.");return false}
@@ -568,33 +576,29 @@ function renderMob(note){
   } else if(MS.phase==="none"){
     x=`<div class="card"><h2>Novo natjecanje</h2><p>30 reprezentacija, 90 timova i 24 sata ribolova. Izvlačenje dodjeljuje svakoj državi po jednu poziciju u sektorima A, B i C.</p><button class="btn" data-cmd="draw">Izvuci pozicije</button></div>`;
   } else if(MS.phase==="drawn"){
-    x=`<div class="card"><h2>Pozicije Hrvatske</h2><div class="poslist">${MS.cro.map(t=>`<div>${esc(t.name)}<br><span>Mjesto ${t.lake}, ploča PEG ${t.peg}, sektor ${t.sec}</span></div>`).join("")}</div>
-    ${myTeam?`<p class="muted">Ovaj mobitel: ${myTeam==="all"?"sva tri tima":"CT Croatia "+myTeam}. <button class="linkbtn" id="chTeam">Promijeni</button></p>`:teamPickHTML(true)}
+    x=`<div class="card"><h2>Pozicije su izvučene</h2>
+    ${myTeam?`<div class="poslist">${MS.cro.filter(t=>myTeams().includes(t.n)).map(t=>`<div>${esc(t.name)}<br><span>Mjesto ${t.lake}, ploča PEG ${t.peg}, sektor ${t.sec}</span></div>`).join("")}</div>`:""}
+    ${myTeam?`<p class="muted">Ovaj mobitel upisuje: ${teamsLabel(myTeams())}. <button class="linkbtn" id="chTeam">Promijeni</button></p>`:teamPickHTML(true)}
     <button class="btn" data-cmd="start">Počni natjecanje (12h)</button><button class="btn sec" data-cmd="draw" data-confirm="Izvući pozicije ponovno?">Izvuci ponovno</button></div>`;
   } else if(MS.phase==="hour"&&!myTeam){
     x=teamPickHTML();
   } else if(MS.phase==="hour"){
-    const mine=myTeam==="all"?MS.cro:MS.cro.filter(t=>t.n===+myTeam);
+    const mine=MS.cro.filter(t=>myTeams().includes(t.n));
     const rd=MS.ready||{},waiting=MS.cro.filter(t=>!rd[t.n]);
     x=`<div class="card"><div class="thead"><h2>Upis za ${HOURS[h]}</h2><button class="linkbtn" id="chTeam">Promijeni tim</button></div>`+mine.map(t=>`<div class="team"><div class="thead"><span class="tname">${esc(t.name)}</span><span class="tmeta">Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></div>`+
       t.rods.map((kg,ri)=>{const r=ri+1,k=t.id+"_"+r;
         if(kg!=null)return `<div class="rod"><label>Štap ${r}</label><div class="done"><span class="num">${fmt(kg)} kg</span>${rd[t.n]?"":`<button data-del="${k}">Ukloni</button>`}</div></div>`;
         if(rd[t.n])return `<div class="rod"><label>Štap ${r}</label><div class="wait">Bez ulova</div></div>`;
         if(sent[k])return `<div class="rod"><label>Štap ${r}</label><div class="wait">Šaljem na TV…</div></div>`;
-        return `<div class="rod"><label for="w${k}">Štap ${r}</label><input id="w${k}" inputmode="decimal" placeholder="kg, npr. 14,37" autocomplete="off"><button class="ok" data-add="${k}">Upiši</button></div><div class="err" id="e${k}"></div>`}).join("")+`</div>`).join("")+
-      `<p class="muted" style="font-size:.85rem">Upišite težinu samo za štap na kojem je riba izvučena, pa potvrdite da ste gotovi.</p></div>`;
+        return `<div class="rod"><label for="w${k}">Štap ${r}</label><input id="w${k}" inputmode="decimal" aria-label="Težina u kg" autocomplete="off"><button class="ok" data-add="${k}">Upiši</button></div><div class="err" id="e${k}"></div>`}).join("")+`</div>`).join("")+`</div>`;
     const meDone=mine.every(t=>rd[t.n]);
     x+=`<div class="card"><h2>${h===23?"Kraj natjecanja":"Sljedeći sat"}</h2><div class="readylist">${MS.cro.map(t=>`<div class="${rd[t.n]?"ok":""}">Croatia ${t.n}<br>${rd[t.n]?"✓ Gotov":"Baca kockice"}</div>`).join("")}</div>`+
       (meDone?`<p class="muted">${waiting.length?`Čeka se: ${waiting.map(t=>"Croatia "+t.n).join(", ")}.`:MS.pending?"Svi su gotovi. Novi sat kreće čim TV pokaže ostale ulove.":"Svi su gotovi, novi sat upravo kreće."}</p><button class="btn sec" data-ready="0">Ipak nisam gotov</button>`
-      :`<button class="btn" data-ready="1">${myTeam==="all"?"Gotovi smo, sva tri tima":"Gotov sam s bacanjem"}</button>`)+
-      `<p class="muted" style="font-size:.85rem">${h===23?"Natjecanje završava":`${HOURS[h+1]} počinje`} kad sva tri tima potvrde.</p></div>`;
+      :`<button class="btn" data-ready="1">${mine.length===3?"Gotovi smo, sva tri tima":mine.length===2?`Gotovi smo (Croatia ${mine[0].n} i ${mine[1].n})`:"Gotov sam s bacanjem"}</button>`)+
+      `<p class="muted" style="font-size:.85rem">${h===23?"Natjecanje završava":`${HOURS[h+1]} počinje`} kad sva tri tima potvrde.</p></div>`+
+      `<p style="text-align:center;margin:28px 0 8px"><button class="linkbtn" data-cmd="reset" data-confirm="Prekinuti natjecanje i početi ispočetka? Svi rezultati bit će obrisani, a pozicije se izvlače ponovno.">Prekini natjecanje i počni ispočetka</button></p>`;
   } else if(MS.phase==="done"){
     x=`<div class="card"><h2>Natjecanje je završeno</h2><p>Hrvatska je na <b>${MS.nat.rank}. mjestu</b>.</p><button class="btn sec" data-cmd="draw" data-confirm="Započeti novo natjecanje? Rezultati ovog natjecanja bit će obrisani.">Novo natjecanje</button></div>`;
-  }
-  if(MS&&MS.cro){
-    x+=`<div class="card"><h2>Hrvatska uživo</h2><div class="summary"><div><b class="num">${MS.nat.rank}.</b><span>ukupno</span></div><div><b class="num">${MS.nat.pts.toLocaleString("hr-HR")}</b><span>bodova</span></div><div><b class="num">${fmt(MS.nat.kg)}</b><span>kg, ${MS.nat.fish} ${plRibe(MS.nat.fish)}</span></div></div>
-    <div class="summary">${MS.cro.map(t=>`<div><b class="num">${t.place}.</b><span>Sektor ${t.sec}, ${fmt(t.kg)} kg</span></div>`).join("")}</div></div>`;
-    x+=`<div class="card"><h2>Poredak država</h2><table><tbody>${MS.top.map(r=>`<tr class="${r.cro?"cro":""}"><td class="rk num">${r.r}</td><td class="name">${esc(r.name)}</td><td class="r num">${r.pts.toLocaleString("hr-HR")}</td><td class="r num">${fmt(r.kg)} kg</td></tr>`).join("")}</tbody></table></div>`;
   }
   // sačuvaj započeti unos pri osvježavanju
   const typed={};b.querySelectorAll("input[id^=w]").forEach(i=>{if(i.value)typed[i.id]=i.value});
@@ -606,9 +610,10 @@ function renderMob(note){
     const go=()=>{const v=parseFloat(inp.value.replace(",",".").trim());if(!(v>0&&v<=40)){$("e"+k).textContent="Upišite težinu između 0,01 i 40 kg.";return}
       if(send({action:"add",t,rod:r,kg:Math.round(v*100)/100})){sent[k]=true;renderMob()}};
     el.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()}});
-  b.querySelectorAll("[data-team]").forEach(el=>el.onclick=()=>{myTeam=el.dataset.team;store("carpwc-team",myTeam);renderMob()});
-  const ch=$("chTeam");if(ch)ch.onclick=()=>{myTeam="";store("carpwc-team","");renderMob()};
-  b.querySelectorAll("[data-ready]").forEach(el=>el.onclick=()=>send({action:"ready",n:myTeam==="all"?"all":+myTeam,val:el.dataset.ready==="1"}));
+  b.querySelectorAll("[data-pick]").forEach(el=>el.onclick=()=>{const n=+el.dataset.pick;pickSel.has(n)?pickSel.delete(n):pickSel.add(n);renderMob()});
+  const po=$("pickOk");if(po)po.onclick=()=>{if(!pickSel.size)return;myTeam=[...pickSel].sort().join(",");store("carpwc-team",myTeam);renderMob()};
+  const ch=$("chTeam");if(ch)ch.onclick=()=>{pickSel=new Set(myTeams());myTeam="";store("carpwc-team","");renderMob()};
+  b.querySelectorAll("[data-ready]").forEach(el=>el.onclick=()=>send({action:"ready",n:myTeams(),val:el.dataset.ready==="1"}));
   b.querySelectorAll("[data-del]").forEach(el=>{const [t,r]=el.dataset.del.split("_").map(Number);el.onclick=()=>send({action:"del",t,rod:r})});
 }
 
