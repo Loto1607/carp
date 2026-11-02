@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carp World Cup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+ --bg:#EAF0EC;--surface:#FFFFFF;--surface2:#F2F6F3;--ink:#13231F;--muted:#566A64;--line:#CAD7D1;
+ --w1:#8FD0DD;--w2:#2F8EA5;--bank:#A9C79A;--reed:#6E9A5E;
+ --cro:#D3132F;--croSoft:#FBE3E6;--A:#C98204;--B:#23855A;--C:#6F52BE;--up:#16834A;--down:#C2303F;--gold:#B98A10;
+ color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+ --bg:#0C1614;--surface:#15221E;--surface2:#1C2C27;--ink:#E5EFEB;--muted:#93A8A1;--line:#2A3D37;
+ --w1:#1F6475;--w2:#0B3240;--bank:#3B5734;--reed:#5E8550;
+ --cro:#FF4F61;--croSoft:#45161D;--A:#F0B13A;--B:#4CC383;--C:#A68BF0;--up:#4CC383;--down:#FF6B78;--gold:#F0C24A;
+ color-scheme:dark;}}
+:root[data-theme="dark"]{
+ --bg:#0C1614;--surface:#15221E;--surface2:#1C2C27;--ink:#E5EFEB;--muted:#93A8A1;--line:#2A3D37;
+ --w1:#1F6475;--w2:#0B3240;--bank:#3B5734;--reed:#5E8550;
+ --cro:#FF4F61;--croSoft:#45161D;--A:#F0B13A;--B:#4CC383;--C:#A68BF0;--up:#4CC383;--down:#FF6B78;--gold:#F0C24A;
+ color-scheme:dark;}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,"Segoe UI",sans-serif;font-size:16px;line-height:1.4}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.cond{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+.muted{color:var(--muted)}
+[hidden]{display:none!important}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:14px 16px;margin-top:10px;font-size:1.05rem;font-weight:600;background:var(--cro);color:#fff}
+.btn.sec{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5}
+
+/* role */
+#role{min-height:100%;display:grid;place-items:center;padding:24px}
+.rcard{max-width:520px;width:100%;text-align:center}
+.rcard h1{font-family:"Barlow Condensed",sans-serif;font-size:2.6rem;margin:0;line-height:1}
+.rbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.rbtns button{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:22px 10px;font-size:1.15rem;font-weight:600}
+.rbtns button span{display:block;font-size:2.4rem}
+
+/* ---------- TV ---------- */
+#tv{height:100vh;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:1.2vh 1.4vw;padding:1.6vh 1.6vw;font-size:2.1vh;overflow:hidden}
+.tvhead{grid-column:1/3;display:flex;align-items:center;gap:2vw}
+.tvhead .brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:4.2vh;line-height:1}
+.tvhead .brand small{display:block;font-size:2vh;font-weight:500;color:var(--muted)}
+.tvclock{display:flex;align-items:center;gap:1.2vw;margin-left:auto}
+.tvhour{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:7vh;line-height:.9}
+.tvperiod{font-size:2.3vh;color:var(--muted);line-height:1.15}
+.conn{display:flex;align-items:center;gap:.6vw;font-size:2vh;padding:.6vh 1vw;border-radius:99px;background:var(--surface2);border:1px solid var(--line)}
+.conn i{width:1.4vh;height:1.4vh;border-radius:50%;background:var(--down)}
+.conn.on i{background:var(--up)}
+.tvbars{grid-column:1/3}
+.hours{display:flex;gap:.25vw}
+.hours span{flex:1;height:.8vh;border-radius:2px;background:var(--line)}
+.hours span.n{background:color-mix(in srgb,var(--w2) 55%,var(--line))}
+.hours span.done{background:var(--ink);opacity:.5}
+.hours span.now{background:var(--cro);opacity:1}
+.progress{height:.5vh;background:var(--line);border-radius:2px;overflow:hidden;margin-top:.6vh}
+.progress i{display:block;height:100%;width:0;background:var(--gold)}
+.tvmap{min-height:0;display:flex;flex-direction:column;gap:1vh}
+.mapwrap{flex:1;min-height:0;background:var(--bank);border-radius:1.6vh;overflow:hidden;border:1px solid var(--line);display:flex}
+.mapwrap svg{width:100%;height:100%;display:block}
+.tvticker{display:grid;grid-template-columns:repeat(4,1fr);gap:.8vw}
+.tvticker div{background:var(--surface);border:1px solid var(--line);border-radius:1.2vh;padding:.8vh 1vw;font-size:1.9vh;line-height:1.25;min-height:6.6vh}
+.tvticker div.cro{border-color:var(--cro)}
+.tvticker b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:2.8vh}
+.tvside{min-height:0;display:flex;flex-direction:column;gap:1.2vh}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:1.6vh;padding:1.2vh 1vw}
+.panel h2{font-family:"Barlow Condensed",sans-serif;margin:0 0 .6vh;font-size:2.8vh;line-height:1}
+.crosum{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.6vw}
+.crosum div{background:var(--surface2);border-radius:1vh;padding:.6vh .5vw;text-align:center;line-height:1.15}
+.crosum b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:3vh}
+.crosum span{font-size:1.6vh;color:var(--muted)}
+.crosum .lead{background:var(--croSoft)}
+.crosum .lead b{color:var(--cro)}
+.tablepanel{flex:1;min-height:0;display:flex;flex-direction:column}
+.tabdots{display:flex;gap:.4vw;margin-left:auto}
+.tabdots span{font-size:1.7vh;padding:.2vh .7vw;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.tabdots span.on{background:var(--ink);color:var(--surface)}
+.tablehead{display:flex;align-items:center;gap:1vw;margin-bottom:.6vh}
+.tbl{flex:1;min-height:0;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+#tv table{font-size:1.45vh;line-height:1.2}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:.85em;padding:0 .4vw .3vh}
+td{padding:.12vh .4vw;border-top:1px solid var(--line);white-space:nowrap}
+td.r,th.r{text-align:right}
+td.name{overflow:hidden;text-overflow:ellipsis;max-width:0;width:100%}
+tr.cro td{background:var(--croSoft);font-weight:600}
+tr.cro td.name{color:var(--cro)}
+.rk{font-family:"Barlow Condensed",sans-serif;font-weight:700}
+.dl{font-size:.85em}
+.dl.u{color:var(--up)}.dl.d{color:var(--down)}.dl.z{color:var(--muted)}
+.fl{display:inline-block;width:2.2vh;height:1.5vh;vertical-align:-.15vh;margin-right:.4vw;border-radius:2px;overflow:hidden}
+@media (prefers-reduced-motion:no-preference){tr.flash td{animation:fl 1.6s ease-out}}
+@keyframes fl{from{background:color-mix(in srgb,var(--gold) 45%,transparent)}}
+.qrbox{display:flex;gap:1vw;align-items:center}
+.qrbox #qr{background:#fff;padding:.8vh;border-radius:1vh;line-height:0}
+.qrbox #qr img,.qrbox #qr canvas{width:16vh!important;height:16vh!important}
+.qrbox p{margin:.3vh 0;font-size:2vh}
+.code{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:5vh;letter-spacing:.2em;line-height:1}
+.tvmsg{position:fixed;inset:auto 0 4vh;display:flex;justify-content:center;pointer-events:none}
+.tvmsg div{background:var(--ink);color:var(--surface);padding:1.4vh 2vw;border-radius:1.4vh;font-size:2.6vh;font-weight:600}
+.final{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 90%,transparent);display:grid;place-items:center;z-index:5}
+.final .box{background:var(--surface);border:1px solid var(--line);border-radius:3vh;padding:4vh 4vw;text-align:center;min-width:50vw}
+.final h1{font-family:"Barlow Condensed",sans-serif;font-size:7vh;margin:0}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5vw;margin:3vh 0}
+.podium div{background:var(--surface2);border-radius:2vh;padding:2vh 1vw;font-size:2.4vh}
+.podium b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:4.4vh}
+
+/* map svg */
+#lake{transition:fill .8s}
+#map.night #lake{fill:url(#wgn)}
+.peg circle{stroke:var(--surface);stroke-width:2}
+.peg text.n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:10px;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.peg.cro circle{stroke:#fff;stroke-width:3}
+.flag{transform-box:fill-box;transform-origin:center;transition:transform .35s cubic-bezier(.2,1.5,.4,1)}
+.fbox{fill:none;stroke:rgba(0,0,0,.4);stroke-width:.8}
+.peg.cro .fbox{stroke:var(--cro);stroke-width:2.5}
+.peg.hit .flag{transform:scale(1.9);filter:drop-shadow(0 0 4px #fff)}
+.peg.hit .fbox{stroke:#fff;stroke-width:1.6}
+.ccode{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:9.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;opacity:.85}
+.peg.cro .ccode{fill:var(--cro);opacity:1}
+.seclabel{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;text-anchor:middle;dominant-baseline:central;opacity:.7}
+.ripple{fill:none;stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:rip 1.6s ease-out forwards}
+.ripple.d{animation-delay:.25s;opacity:0}
+@keyframes rip{0%{transform:scale(.2);opacity:.95}100%{transform:scale(3.2);opacity:0}}
+.jump{animation:jump 1.4s ease-out forwards;transform-box:fill-box;transform-origin:center}
+@keyframes jump{0%{transform:translateY(8px) scale(.6) rotate(-20deg);opacity:0}25%{opacity:1}55%{transform:translateY(-26px) scale(1.15) rotate(15deg)}100%{transform:translateY(4px) scale(.8) rotate(40deg);opacity:0}}
+.badge{animation:badge 4.8s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.badge rect{stroke:#fff;stroke-width:1.5}
+.badge.s rect{fill:#2F6FDB}.badge.m rect{fill:#16834A}.badge.l rect{fill:#C98A04}
+.badge.cro rect{stroke:var(--cro);stroke-width:3}
+.badge text{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;fill:#fff;text-anchor:middle;dominant-baseline:central}
+@keyframes badge{0%{opacity:0;transform:scale(.5)}8%{opacity:1;transform:scale(1.12)}14%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.ripple,.jump,.badge{animation-duration:.01s}.flag{transition:none}}
+
+/* ---------- MOBITEL ---------- */
+#mob{max-width:560px;margin:0 auto;padding:12px 14px 40px}
+.mtop{position:sticky;top:0;z-index:3;background:var(--bg);padding:6px 0 8px;display:flex;align-items:center;gap:10px}
+.mtop .h{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.2rem;line-height:1}
+.mtop .p{font-size:.85rem;color:var(--muted);line-height:1.15}
+.mtop .conn{margin-left:auto;font-size:.85rem;padding:4px 10px}
+.mtop .conn i{width:10px;height:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px}
+.card h2{font-family:"Barlow Condensed",sans-serif;font-size:1.35rem;margin:0 0 6px}
+.codein{display:flex;gap:8px;margin-top:8px}
+.codein input{flex:1;font-size:1.6rem;letter-spacing:.2em;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface2)}
+.codein .btn{width:auto;margin:0}
+.team{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.team:first-of-type{border-top:none;margin-top:0;padding-top:0}
+.thead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tname{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.2rem;color:var(--cro)}
+.tmeta{font-size:.85rem;color:var(--muted)}
+.rod{display:grid;grid-template-columns:56px 1fr auto;gap:8px;align-items:center;margin-top:6px}
+.rod label{font-size:.9rem;color:var(--muted)}
+.rod input{width:100%;padding:11px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);font-size:1.1rem}
+.rod .ok{border:none;border-radius:10px;background:var(--ink);color:var(--surface);padding:11px 14px;font-weight:600}
+.rod .done{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-radius:10px;background:var(--croSoft);font-weight:600;grid-column:2/4}
+.rod .done button{border:none;background:none;color:var(--muted);font-size:.85rem;text-decoration:underline}
+.rod .wait{grid-column:2/4;padding:10px;color:var(--muted)}
+.err{color:var(--down);font-size:.85rem;min-height:1em;margin:2px 0 0 64px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.summary div{background:var(--surface2);border-radius:10px;padding:8px;text-align:center;line-height:1.2}
+.summary b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:1.5rem}
+.summary span{font-size:.78rem;color:var(--muted)}
+#mob table{font-size:.92rem}
+#mob td{padding:5px 6px}
+.poslist{display:grid;gap:6px;margin-top:8px}
+.poslist div{background:var(--croSoft);border-radius:10px;padding:8px 10px;color:var(--cro);font-weight:600}
+.poslist span{color:var(--ink);font-weight:400}
+</style>
+</head>
+<body>
+<section id="role" hidden>
+ <div class="rcard">
+  <div style="font-size:3rem">🎣</div>
+  <h1>Carp World Cup</h1>
+  <p class="muted">Na kojem ste uređaju?</p>
+  <div class="rbtns">
+   <button id="pickTv"><span>📺</span>Televizor<br><small class="muted">karta i poredak</small></button>
+   <button id="pickMob"><span>📱</span>Mobitel<br><small class="muted">upis i upravljanje</small></button>
+  </div>
+ </div>
+</section>
+
+<section id="tv" hidden>
+ <div class="tvhead">
+  <div class="brand">Carp World Cup<small>Svjetsko prvenstvo u ribolovu šarana</small></div>
+  <div class="conn" id="tvConn"><i></i><span>Mobitel nije spojen</span></div>
+  <div class="tvclock"><div class="tvhour num" id="tvHour">12h</div><div class="tvperiod" id="tvPeriod">Prije starta</div></div>
+ </div>
+ <div class="tvbars"><div class="hours" id="tvHours"></div><div class="progress"><i id="tvProg"></i></div></div>
+ <div class="tvmap">
+  <div class="mapwrap"><svg id="map" viewBox="-30 -30 1060 700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Karta jezera"></svg></div>
+  <div class="tvticker" id="tvTicker"></div>
+ </div>
+ <div class="tvside">
+  <div class="panel" id="tvQr">
+   <div class="qrbox"><div id="qr"></div><div><p>Skenirajte mobitelom ili upišite kod:</p><div class="code num" id="tvCode">-----</div><p class="muted" id="tvNet">Spajanje na mrežu…</p></div></div>
+  </div>
+  <div class="panel"><h2>Hrvatska</h2><div class="crosum" id="tvCro"></div></div>
+  <div class="panel tablepanel"><div class="tablehead"><h2 id="tvTblTitle" style="margin:0">Države</h2><div class="tabdots" id="tvDots"></div></div><div class="tbl" id="tvTbl"></div></div>
+ </div>
+ <div class="tvmsg" id="tvMsg" hidden><div></div></div>
+ <div class="final" id="tvFinal" hidden></div>
+</section>
+
+<section id="mob" hidden>
+ <div class="mtop"><div><div class="h num" id="mHour">–</div><div class="p" id="mPeriod">Nije spojeno</div></div><div class="conn" id="mConn"><i></i><span>Nije spojeno</span></div></div>
+ <div id="mBody"></div>
+</section>
+
+<script>
+const PEGS={"3":[["90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","90270","80270"],["90280","90280","80280","80280","80280","80280","90280","90280","90280","90280","90270","80270"],["80380","80370","80370","80370","80370","80370","80370","90280","90280","90280","90280","80270"],["70560","50650","50650","50560","50650","50650","70570","60460","70260","70270","60260","60260"]],"4":[["70370","80370","80370","80280","90280","90280","90280","90280","90280","90280","90280","90270"],["60370","70370","80370","90280","90280","90280","90280","90280","90280","90280","90280","90270"],["70470","70470","80570","90270","90270","90270","90270","90270","90280","90270","70480","90280"],["60670","70470","70370","70570","60670","50650","60570","60570","50650","50550","80380","80380"]],"5":[["80460","80460","80460","80460","80470","80370","90370","90370","90370","90370","90370","90370"],["90380","90380","90380","90380","90380","80470","80370","80370","90370","90370","90370","90370"],["90380","90380","90380","90380","90380","90380","90380","90380","90380","90380","90380","90370"],["70470","80480","60460","80470","80470","80470","50650","60560","60560","50650","60470","80480"]],"6":[["80270","90270","90270","90270","90270","90270","80370","80370","80370","80370","80370","80370"],["90270","80270","90280","90270","90280","90280","90280","90280","90280","90280","90280","90270"],["90280","90270","90280","90280","90280","90280","90280","90280","90280","90280","90280","90280"],["70570","70470","70470","70370","70470","70370","50560","50660","50660","50660","60560","80380"]],"7":[["90270","90270","90280","90280","90280","90280","90280","90280","90280","90280","90280","80270"],["90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","80270"],["90270","90270","90270","90270","90270","90270","90270","90270","90270","80270","80270","80270"],["70370","80270","70570","60570","80270","70370","60560","60560","70470","70470","60360","60270"]],"8":[["90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","90270","90270"],["90280","90280","80270","90270","90280","90280","90280","90280","90280","90270","90270","90270"],["80270","80270","80270","80270","80270","90270","90280","90280","90280","80270","80270","80270"],["70470","70470","80270","70360","60560","60560","50650","50650","50650","50650","50650","60460"]],"9":[["90280","90280","90280","90280","90280","90280","90280","90280","90280","90270","90270","90270"],["90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","90270","90270"],["80270","80270","80270","80270","90270","90270","90270","90270","90280","90280","90280","90280"],["60360","50360","50360","60360","50460","50460","50360","60360","80270","80370","90280","90280"]],"10":[["90270","90270","90280","90280","90280","90280","90270","90280","90280","90280","90280","90280"],["80270","90270","90270","90270","80270","90270","80270","90280","90270","90270","90280","90280"],["90280","90280","90280","90270","80270","80270","70570","90270","90270","90270","90280","90280"],["70270","60270","60270","60360","50650","70570","50650","60360","60270","60360","70270","70270"]],"11":[["90270","90370","90370","90370","90280","90280","90280","90280","90280","90280","90270","90470"],["90270","90380","90380","90380","90280","90280","90280","90280","90280","90280","90270","90470"],["80270","90370","80370","90380","80270","80270","80270","80270","80270","90270","90280","90380"],["60360","60360","50450","50350","50450","60360","60360","60360","60360","60360","60460","50450"]],"12":[["90370","90270","90280","90280","90280","90280","90280","90280","90280","90280","90270","90270"],["90380","90380","90280","90380","90380","90280","90280","90280","90280","90280","90280","90270"],["70470","70470","70470","70470","80470","90470","90470","90470","90470","90280","90280","90280"],["70570","50650","50650","50550","50650","60660","60660","60660","60660","60360","60270","60270"]],"13":[["80470","80470","80370","90380","90280","90280","90280","90280","90280","90380","80460","80460"],["80470","80470","80370","80380","90280","90280","90280","90280","90280","90480","70460","70460"],["70460","70460","70460","80480","80380","90380","90380","90380","90380","90480","60460","60660"],["50650","50650","60660","70560","70560","70570","50650","60560","70570","80580","70660","80670"]],"14":[["90270","90270","90280","90280","90280","90280","90280","90280","90280","90280","90270","90270"],["90270","90280","90280","80280","80280","80280","90280","80280","90280","90280","90280","90270"],["70470","70470","90370","80370","80370","80370","80280","80370","90370","90380","90380","90280"],["60660","60660","70560","60660","60560","60670","70470","60560","60660","70570","60670","60570"]],"15":[["80270","90280","90280","90280","90280","90280","90280","90280","90280","90280","90280","90280"],["70270","90270","90280","90280","90280","90270","80370","80370","90280","90280","90280","90280"],["70270","80270","80370","90270","90370","80570","90270","80370","80370","80470","80470","90270"],["70470","50550","50650","50550","60660","70660","70470","60570","70570","70670","70570","70470"]],"16":[["90280","90280","90280","90280","90280","90280","90280","90280","90280","90270","70460","70460"],["90280","90280","90280","90280","90280","90280","80280","80280","80280","80370","60560","50560"],["90280","90370","80370","90280","80370","80370","80470","80370","80470","80470","60660","50660"],["80470","70560","70660","70460","60660","60560","50660","60460","50660","50560","50660","50660"]],"17":[["80270","90280","90280","90280","90280","90280","90280","90280","90280","80280","80370","60360"],["70370","90380","90380","90380","90280","90280","90280","80270","80270","90280","80370","60360"],["70570","90570","70570","70570","80370","80370","80370","90380","90380","90380","90380","90280"],["60670","80670","70560","60560","80370","80370","80370","70570","70660","70570","60670","90370"]]};
+const COUNTRIES=[["CRO","Croatia"],["ENG","England"],["FRA","France"],["NED","Netherlands"],["BEL","Belgium"],["GER","Germany"],["ITA","Italy"],["ESP","Spain"],["POR","Portugal"],["HUN","Hungary"],["CZE","Czech Republic"],["SVK","Slovakia"],["POL","Poland"],["ROU","Romania"],["SRB","Serbia"],["BIH","Bosnia and Herzegovina"],["SLO","Slovenia"],["AUT","Austria"],["UKR","Ukraine"],["RSA","South Africa"],["USA","USA"],["ISR","Israel"],["LAT","Latvia"],["LTU","Lithuania"],["BUL","Bulgaria"],["IRL","Ireland"],["SCO","Scotland"],["WAL","Wales"],["MDA","Moldova"],["LUX","Luxembourg"]];
+const HOURS=["12h","13h","14h","15h","16h","17h","18h","19h","20h","21h","22h","23h","00h","01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h"];
+const isNight=h=>h>=6&&h<=17;
+const SECT=["A","B","C"];
+const ROUND_MS=30000, GAP=5200, PEER_PREFIX="carpwc-tlc-";
+const KEY_STATE="carpwc-state-v2", KEY_CODE="carpwc-code", KEY_LASTCODE="carpwc-lastcode";
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=id=>document.getElementById(id);
+const fmt=kg=>(Math.round(kg*100)/100).toLocaleString("hr-HR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pegOf=lake=>((lake-1)%15)+3;
+const sectorOf=lake=>SECT[Math.floor((lake-1)/30)];
+const rnd=n=>1+Math.floor(Math.random()*n);
+const pctDie=()=>Math.floor(Math.random()*10)*10;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tName=t=>`CT ${COUNTRIES[t.c][1]} ${t.n}`;
+function plRibe(n){const a=n%10,b=n%100;if(a===1&&b!==11)return"riba";if(a>=2&&a<=4&&(b<12||b>14))return"ribe";return"riba"}
+function store(k,v){try{localStorage.setItem(k,typeof v==="string"?v:JSON.stringify(v))}catch(e){}}
+function fetchStore(k){try{return localStorage.getItem(k)}catch(e){return null}}
+const hz=(...c)=>c.map((col,i)=>`<rect y="${i*20/c.length}" width="30" height="${20/c.length+.2}" fill="${col}"/>`).join("");
+const vt=(...c)=>c.map((col,i)=>`<rect x="${i*30/c.length}" width="${30/c.length+.2}" height="20" fill="${col}"/>`).join("");
+const FLAGS={
+ CRO:hz("#FF0000","#FFFFFF","#171796")+`<g transform="translate(12 4.5)"><rect width="6" height="8" fill="#fff"/><path d="M0 0h2v2H0zM4 0h2v2H4zM2 2h2v2H2zM0 4h2v2H0zM4 4h2v2H4zM2 6h2v2H2z" fill="#f00"/><rect width="6" height="8" fill="none" stroke="#f00" stroke-width=".5"/></g>`,
+ ENG:`<rect width="30" height="20" fill="#fff"/><rect x="12.5" width="5" height="20" fill="#CE1124"/><rect y="7.5" width="30" height="5" fill="#CE1124"/>`,
+ FRA:vt("#0055A4","#fff","#EF4135"),
+ NED:hz("#AE1C28","#fff","#21468B"),
+ BEL:vt("#000","#FAE042","#ED2939"),
+ GER:hz("#000","#DD0000","#FFCE00"),
+ ITA:vt("#009246","#fff","#CE2B37"),
+ ESP:`<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>`,
+ POR:`<rect width="30" height="20" fill="#FF0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="3.6" fill="#FFE000"/>`,
+ HUN:hz("#CE2939","#fff","#477050"),
+ CZE:`<rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#D7141A"/><path d="M0 0L15 10L0 20Z" fill="#11457E"/>`,
+ SVK:hz("#fff","#0B4EA2","#EE1C25")+`<path d="M7 4h7v7c0 3-3.5 5-3.5 5S7 14 7 11z" fill="#EE1C25" stroke="#fff" stroke-width=".8"/>`,
+ POL:hz("#fff","#DC143C"),
+ ROU:vt("#002B7F","#FCD116","#CE1126"),
+ SRB:hz("#C6363C","#0C4076","#fff")+`<rect x="7" y="4" width="5" height="8" rx="1" fill="#C6363C" stroke="#fff" stroke-width=".6"/>`,
+ BIH:`<rect width="30" height="20" fill="#002395"/><path d="M8 0H24V20Z" fill="#FECB00"/>`,
+ SLO:hz("#fff","#0000FF","#FF0000")+`<path d="M6 3h6v5c0 2.5-3 4-3 4s-3-1.5-3-4z" fill="#0000FF" stroke="#FF0000" stroke-width=".7"/>`,
+ AUT:hz("#ED2939","#fff","#ED2939"),
+ UKR:hz("#0057B7","#FFD700"),
+ RSA:`<rect width="30" height="10" fill="#E03C31"/><rect y="10" width="30" height="10" fill="#001489"/><path d="M0 0L13 8.5H30V11.5H13L0 20" fill="none" stroke="#fff" stroke-width="5"/><path d="M0 0L13 8.5H30V11.5H13L0 20" fill="none" stroke="#007749" stroke-width="3"/><path d="M0 2.5L10 10L0 17.5Z" fill="#000" stroke="#FFB81C" stroke-width="1.4"/>`,
+ USA:Array.from({length:13},(_,i)=>`<rect y="${i*20/13}" width="30" height="${20/13+.1}" fill="${i%2?"#fff":"#B22234"}"/>`).join("")+`<rect width="13" height="10.8" fill="#3C3B6E"/>`,
+ ISR:`<rect width="30" height="20" fill="#fff"/><rect y="2" width="30" height="3" fill="#0038B8"/><rect y="15" width="30" height="3" fill="#0038B8"/><path d="M15 6.5l3 5.2h-6zM15 13.5l-3-5.2h6z" fill="none" stroke="#0038B8" stroke-width=".9"/>`,
+ LAT:`<rect width="30" height="20" fill="#9E3039"/><rect y="8" width="30" height="4" fill="#fff"/>`,
+ LTU:hz("#FDB913","#006A44","#C1272D"),
+ BUL:hz("#fff","#00966E","#D62612"),
+ IRL:vt("#169B62","#fff","#FF883E"),
+ SCO:`<rect width="30" height="20" fill="#0065BD"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="3.5"/>`,
+ WAL:`<rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#00B140"/><path d="M8 13c2-4 6-6 9-5l3-3 1 3 3 1-3 2c0 3-3 5-6 5l-2 2-1-2c-2 0-3-1-4-3z" fill="#D30731"/>`,
+ MDA:vt("#0046AE","#FFD200","#CC092F")+`<rect x="13" y="7" width="4" height="6" fill="#8B5A2B"/>`,
+ LUX:hz("#EF3340","#fff","#00A3E0")
+};
+
+const LAKE="M160 330C140 175 300 85 470 110C590 128 640 72 765 80C905 92 935 212 872 300C820 372 905 445 852 522C790 602 622 562 520 547C418 532 360 604 238 562C128 524 172 432 160 330Z";
+
+/* ===================== IGRA (radi na televizoru) ===================== */
+// kvaliteta polja kao u Excelu (ispravljeno: noću se gleda noćna vrijednost)
+const score=(c,night)=>night?(10-(+c.slice(3,5))/10)*(9-(+c[2])):(10-(+c[0]))*(9-(+c[2]));
+const AVG={};for(const p in PEGS){AVG[p]=[0,1].map(n=>{let s=0;PEGS[p].forEach(r=>r.forEach(c=>s+=score(c,!!n)));return s/48})}
+const cell=(peg,rod)=>PEGS[peg][rod[1]-1][rod[0]-1];
+let S=null,timer=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function draw(){
+  for(let tries=0;tries<200000;tries++){
+    const secs=[0,1,2].map(s=>shuffle(Array.from({length:30},(_,i)=>s*30+i+1)));
+    let ok=true;
+    for(let c=0;c<30&&ok;c++)if(new Set(secs.map(s=>pegOf(s[c]))).size<3)ok=false;
+    if(ok){const teams=[];for(let c=0;c<30;c++)for(let s=0;s<3;s++){const lake=secs[s][c];teams.push({id:teams.length,c,n:s+1,lake,peg:pegOf(lake),sec:SECT[s],cpu:c!==0,rods:null})}return teams}
+  }
+}
+function castRods(keep){const rods=keep.slice();while(rods.length<3){const r=[rnd(12),rnd(4)];if(!rods.some(x=>x[0]===r[0]&&x[1]===r[1]))rods.push(r)}return rods}
+function simulateHour(h){
+  const night=isNight(h),events=[];
+  for(const t of S.teams){
+    if(!t.cpu)continue;
+    if(!t.rods)t.rods=castRods([]);
+    const caught=[false,false,false];
+    t.rods.forEach((rod,i)=>{const c=cell(t.peg,rod),thr=night?+c.slice(3,5):+c.slice(0,2);
+      if(pctDie()>=thr&&rnd(8)>=+c[2]){const kg=rnd(20)+((rnd(10)-1)*10+(rnd(10)-1))/100;caught[i]=true;events.push({t:t.id,kg:Math.round(kg*100)/100,rod:i+1})}});
+    if(h<23){const nn=isNight(h+1),avg=AVG[t.peg][nn?1:0];t.rods=castRods(t.rods.filter((rod,i)=>!caught[i]&&score(cell(t.peg,rod),nn)>=avg))}
+  }
+  const byTeam={};events.forEach(e=>(byTeam[e.t]=byTeam[e.t]||[]).push(e));
+  Object.values(byTeam).forEach(list=>{const span=(list.length-1)*GAP,t0=1200+Math.random()*Math.max(0,ROUND_MS-2500-span);shuffle(list).forEach((e,i)=>e.at=t0+i*GAP)});
+  return events.sort((a,b)=>a.at-b.at);
+}
+function saveState(){store(KEY_STATE,S)}
+function newGame(){stopTimer();S={phase:"drawn",hour:-1,teams:draw(),catches:[],pending:[],startedAt:0,snaps:[]};tickerItems=[];lastRanks={};saveState()}
+function startHour(h){S.hour=h;S.phase="hour";S.snaps[h]=rankSnapshot();S.pending=simulateHour(h);S.startedAt=Date.now();saveState();runTimer()}
+function finishHour(){
+  S.pending.forEach(e=>applyCatch(e,false));S.pending=[];
+  if(S.hour>=23){S.phase="done";stopTimer();saveState();return}
+  startHour(S.hour+1);
+}
+function applyCatch(e,animate){
+  S.catches.push({t:e.t,h:S.hour,kg:e.kg,rod:e.rod});
+  if(animate)animateCatch(S.teams[e.t],e.kg);
+  tickerItems.unshift({t:e.t,kg:e.kg,h:S.hour});tickerItems=tickerItems.slice(0,4);
+}
+function runTimer(){
+  stopTimer();
+  const tick=()=>{
+    const el=Date.now()-S.startedAt;let changed=false;
+    while(S.pending.length&&S.pending[0].at<=el){applyCatch(S.pending.shift(),true);changed=true}
+    $("tvProg").style.width=Math.min(100,el/ROUND_MS*100)+"%";
+    if(changed){saveState();renderTvData();broadcastSoon()}
+    if(el>=ROUND_MS&&!S.pending.length){stopTimer();$("tvProg").style.width="100%";broadcastSoon()}
+  };
+  tick();timer=setInterval(tick,200);
+}
+function stopTimer(){if(timer)clearInterval(timer);timer=null}
+function computeRanks(){
+  const n=S.teams.length,kg=new Array(n).fill(0),fish=new Array(n).fill(0);
+  S.catches.forEach(c=>{kg[c.t]+=c.kg;fish[c.t]++});
+  for(let i=0;i<n;i++)kg[i]=Math.round(kg[i]*100)/100;
+  const team={},sector={};
+  for(const s of SECT){
+    const list=S.teams.filter(t=>t.sec===s).sort((a,b)=>kg[b.id]-kg[a.id]||a.lake-b.lake);let i=0;
+    while(i<list.length){let j=i;while(j+1<list.length&&kg[list[j+1].id]===kg[list[i].id])j++;const pts=(i+j+2)/2;for(let k=i;k<=j;k++)team[list[k].id]={pts,place:i+1};i=j+1}
+    sector[s]=list;
+  }
+  const nat=COUNTRIES.map((c,ci)=>{const ts=S.teams.filter(t=>t.c===ci);return{ci,pts:ts.reduce((a,t)=>a+team[t.id].pts,0),kg:Math.round(ts.reduce((a,t)=>a+kg[t.id],0)*100)/100,fish:ts.reduce((a,t)=>a+fish[t.id],0)}});
+  nat.sort((a,b)=>a.pts-b.pts||b.kg-a.kg||a.ci-b.ci);
+  const natRank={};nat.forEach((x,i)=>natRank[x.ci]=i+1);
+  return{kg,fish,team,sector,nat,natRank};
+}
+function rankSnapshot(){const R=computeRanks(),t={};for(const id in R.team)t[id]=R.team[id].place;return{t,n:R.natRank}}
+
+/* naredbe s mobitela */
+function handleCmd(m){
+  if(!m||typeof m!=="object")return;
+  const ph=S?S.phase:"none";
+  switch(m.action){
+    case "draw": if(ph==="none"||ph==="drawn"||ph==="done"){newGame();toast("Pozicije su izvučene")} break;
+    case "start": if(ph==="drawn"){startHour(0);toast("Natjecanje je počelo")} break;
+    case "next": if(ph==="hour"){finishHour();if(S.phase==="done")toast("Natjecanje je završeno")} break;
+    case "add":{
+      if(ph!=="hour")break;const t=S.teams[m.t];const kg=Math.round(+m.kg*100)/100;
+      if(!t||t.cpu||!(kg>0&&kg<=40)||![1,2,3].includes(m.rod))break;
+      if(S.catches.some(c=>c.t===t.id&&c.h===S.hour&&c.rod===m.rod))break;
+      applyCatch({t:t.id,kg,rod:m.rod},true);saveState();break}
+    case "del": if(ph==="hour"){S.catches=S.catches.filter(c=>!(c.t===m.t&&c.h===S.hour&&c.rod===m.rod));tickerItems=S.catches.slice(-4).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));saveState()} break;
+  }
+  renderTv();broadcast();
+}
+function phoneState(){
+  if(!S)return{phase:"none"};
+  const R=computeRanks();const nat=R.nat.find(x=>x.ci===0);
+  const cro=S.teams.filter(t=>!t.cpu).map(t=>({id:t.id,name:tName(t),lake:t.lake,peg:t.peg,sec:t.sec,place:R.team[t.id].place,kg:R.kg[t.id],fish:R.fish[t.id],
+    rods:[1,2,3].map(r=>{const c=S.catches.find(x=>x.t===t.id&&x.h===S.hour&&x.rod===r);return c?c.kg:null})}));
+  const top=R.nat.map((x,i)=>({r:i+1,code:COUNTRIES[x.ci][0],name:COUNTRIES[x.ci][1],pts:x.pts,kg:x.kg,cro:x.ci===0}));
+  return{phase:S.phase,hour:S.hour,pending:S.pending.length,nat:{rank:R.natRank[0],pts:nat.pts,kg:nat.kg,fish:nat.fish},cro,top};
+}
+
+/* ===================== MREŽA ===================== */
+let peer=null,conns=new Set(),bcTimer=null;
+function broadcast(){const msg={type:"state",s:phoneState()};conns.forEach(c=>{try{if(c.open)c.send(msg)}catch(e){}})}
+function broadcastSoon(){if(bcTimer)return;bcTimer=setTimeout(()=>{bcTimer=null;broadcast()},700)}
+function hostCode(){let c=fetchStore(KEY_CODE);if(!c){c=String(10000+Math.floor(Math.random()*90000));store(KEY_CODE,c)}return c}
+function startHost(){
+  if(typeof Peer==="undefined"){$("tvNet").textContent="Servis za spajanje nije dostupan. Provjerite internet i osvježite stranicu.";return}
+  const code=hostCode();$("tvCode").textContent=code;
+  const url=location.origin+location.pathname+"?c="+code;
+  try{$("qr").innerHTML="";if(typeof QRCode!=="undefined")new QRCode($("qr"),{text:url,width:256,height:256,correctLevel:QRCode.CorrectLevel.M})}catch(e){}
+  peer=new Peer(PEER_PREFIX+code,{debug:0});
+  peer.on("open",()=>{$("tvNet").textContent="Spremno za spajanje";});
+  peer.on("connection",conn=>{
+    conn.on("open",()=>{conns.add(conn);renderConn();conn.send({type:"state",s:phoneState()})});
+    conn.on("data",d=>{if(d&&d.type==="cmd")handleCmd(d)});
+    conn.on("close",()=>{conns.delete(conn);renderConn()});
+    conn.on("error",()=>{conns.delete(conn);renderConn()});
+  });
+  peer.on("disconnected",()=>{$("tvNet").textContent="Veza sa servisom prekinuta, ponovno spajanje…";setTimeout(()=>{try{peer.reconnect()}catch(e){}},2000)});
+  peer.on("error",err=>{
+    if(err.type==="unavailable-id"){store(KEY_CODE,"");try{peer.destroy()}catch(e){}setTimeout(startHost,500);return}
+    $("tvNet").textContent="Greška veze: "+err.type;
+  });
+}
+function renderConn(){
+  const n=[...conns].filter(c=>c.open).length;
+  $("tvConn").classList.toggle("on",n>0);
+  $("tvConn").querySelector("span").textContent=n?`Mobitel spojen${n>1?" ("+n+")":""}`:"Mobitel nije spojen";
+  $("tvQr").hidden=n>0&&S&&S.phase==="hour";
+}
+
+/* ===================== TV PRIKAZ ===================== */
+let tickerItems=[],lastRanks={},PEGPOS=[],tblView=0,toastT=null,pegsKey="";
+const VIEWS=["N","A","B","C"];
+const W=1000,H=640;
+function buildMap(){
+  const svg=$("map");
+  svg.innerHTML=`<defs><radialGradient id="wg" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="var(--w1)"/><stop offset="1" stop-color="var(--w2)"/></radialGradient>
+  <radialGradient id="wgn" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="#1A3F5C"/><stop offset="1" stop-color="#081826"/></radialGradient>${Object.keys(FLAGS).map(k=>`<symbol id="f-${k}" viewBox="0 0 30 20" preserveAspectRatio="none">${FLAGS[k]}</symbol>`).join("")}</defs>
+  <rect x="-30" y="-30" width="1060" height="700" fill="var(--bank)"/>
+  <path id="lake" d="${LAKE}" fill="url(#wg)" stroke="var(--reed)" stroke-width="10" stroke-linejoin="round"/>
+  <g id="secarcs"></g>
+  <g><ellipse cx="560" cy="335" rx="58" ry="30" fill="var(--bank)" stroke="var(--reed)" stroke-width="5"/><circle cx="545" cy="328" r="11" fill="var(--reed)"/><circle cx="572" cy="333" r="9" fill="var(--reed)"/></g>
+  <g id="secl"></g><g id="pegs"></g><g id="fx"></g>`;
+  const lake=$("lake"),L=lake.getTotalLength();
+  $("secarcs").innerHTML=SECT.map((s,k)=>`<path d="${LAKE}" fill="none" stroke="var(--${s})" stroke-width="5" stroke-dasharray="${L/3-6} ${L}" stroke-dashoffset="${-(k*L/3+3)}"/>`).join("");
+  const inside=(x,y)=>{try{const p=svg.createSVGPoint();p.x=x;p.y=y;return lake.isPointInFill(p)}catch(e){return Math.hypot(x-520,y-330)<200}};
+  const at=(s,off)=>{const a=lake.getPointAtLength((s+L)%L),b=lake.getPointAtLength((s+L-2)%L),c=lake.getPointAtLength((s+2)%L);
+    let nx=c.y-b.y,ny=-(c.x-b.x);const m=Math.hypot(nx,ny)||1;nx/=m;ny/=m;if(inside(a.x+nx*6,a.y+ny*6)){nx=-nx;ny=-ny}
+    return{x:a.x+nx*off,y:a.y+ny*off,wx:a.x-nx*42,wy:a.y-ny*42}};
+  PEGPOS=[];for(let i=0;i<90;i++){const s=(i+.5)/90*L;PEGPOS.push({...at(s,18),f:at(s,42),k:at(s,59)})}
+  $("secl").innerHTML=SECT.map((s,k)=>{const p=at((k+.5)/3*L,-75);return `<text class="seclabel" x="${p.x}" y="${p.y}" fill="var(--${s})">${s}</text>`}).join("");
+}
+function renderPegs(){
+  const byLake={};if(S&&S.teams)S.teams.forEach(t=>byLake[t.lake]=t);
+  $("pegs").innerHTML=PEGPOS.map((p,i)=>{const lake=i+1,t=byLake[lake],cro=t&&!t.cpu;
+    return `<g class="peg ${cro?"cro":""}" data-l="${lake}"><circle cx="${p.x}" cy="${p.y}" r="10" fill="${cro?"var(--cro)":`var(--${sectorOf(lake)})`}"/><text class="n" x="${p.x}" y="${p.y}">${lake}</text>${t?`<g class="flag"><use href="#f-${COUNTRIES[t.c][0]}" x="${p.f.x-12}" y="${p.f.y-8}" width="24" height="16"/><rect class="fbox" x="${p.f.x-12}" y="${p.f.y-8}" width="24" height="16"/></g><text class="ccode" x="${p.k.x}" y="${p.k.y}">${COUNTRIES[t.c][0]}</text>`:""}</g>`}).join("");
+}
+function animateCatch(t,kg){
+  const p=PEGPOS[t.lake-1];if(!p)return;const cro=!t.cpu;
+  const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+  const size=kg>=15?"l":kg>=10?"m":"s",sc=(0.8+Math.min(kg,25)/20*0.9).toFixed(2),code=COUNTRIES[t.c][0];
+  const label=`${code} ${fmt(kg)} kg`,bw=label.length*6.6+14,bx=p.k.x,by=p.k.y+(p.k.y>p.f.y?10:-10);
+  g.innerHTML=`<circle class="ripple" cx="${p.wx}" cy="${p.wy}" r="10"/><circle class="ripple d" cx="${p.wx}" cy="${p.wy}" r="10"/>
+  <g transform="translate(${p.wx} ${p.wy}) scale(${sc}) translate(${-p.wx} ${-p.wy})"><g class="jump"><path d="M${p.wx-11} ${p.wy}c6-7 16-7 22 0c-6 7-16 7-22 0zM${p.wx+10} ${p.wy}l8-6v12z" fill="${cro?"#fff":"#F4C770"}" stroke="${cro?"var(--cro)":"#7A5418"}" stroke-width="1.5"/></g></g>
+  <g class="badge ${size} ${cro?"cro":""}"><rect x="${bx-bw/2}" y="${by-11}" width="${bw}" height="22" rx="7"/><text x="${bx}" y="${by}">${label}</text></g>`;
+  $("fx").appendChild(g);
+  const peg=$("pegs").querySelector(`[data-l="${t.lake}"]`);
+  if(peg){peg.parentNode.appendChild(peg);peg.classList.add("hit");clearTimeout(peg._ht);peg._ht=setTimeout(()=>peg.classList.remove("hit"),4500)}
+  setTimeout(()=>g.remove(),5000);
+}
+const flagHTML=code=>`<svg class="fl" viewBox="0 0 30 20" preserveAspectRatio="none"><use href="#f-${code}"/></svg>`;
+function renderTvHeader(){
+  const h=S&&S.hour>=0?S.hour:0;
+  $("tvHour").textContent=S&&S.phase==="done"?"Kraj":HOURS[h];
+  $("tvPeriod").innerHTML=!S||S.phase==="none"?"Čeka se izvlačenje":S.phase==="drawn"?"Pozicije su izvučene<br>Start u 12h":S.phase==="hour"?`${h+1}. od 24 sata<br>${isNight(h)?"Noć":"Dan"}`:"Natjecanje<br>završeno";
+  $("tvHours").innerHTML=HOURS.map((x,i)=>`<span class="${isNight(i)?"n":""} ${S&&(i<S.hour||S.phase==="done")?"done":""} ${S&&S.phase==="hour"&&i===S.hour?"now":""}"></span>`).join("");
+  $("map").classList.toggle("night",!!(S&&S.phase==="hour"&&isNight(S.hour)));
+  if(!S||S.phase!=="hour")$("tvProg").style.width="0";
+}
+function renderTvData(){
+  // Hrvatska
+  if(!S||!S.teams){$("tvCro").innerHTML=`<div class="lead" style="grid-column:1/5"><span>Izvlačenje pokrenite s mobitela.</span></div>`;$("tvTbl").innerHTML="";$("tvTicker").innerHTML="";return}
+  const R=computeRanks(),n=R.nat.find(x=>x.ci===0);
+  $("tvCro").innerHTML=`<div class="lead"><b class="num">${R.natRank[0]}.</b><span>${n.pts.toLocaleString("hr-HR")} bod., ${fmt(n.kg)} kg</span></div>`+
+    S.teams.filter(t=>!t.cpu).map(t=>`<div><b class="num">${R.team[t.id].place}.</b><span>Sektor ${t.sec}, ${fmt(R.kg[t.id])} kg</span></div>`).join("");
+  // ticker
+  $("tvTicker").innerHTML=[0,1,2,3].map(i=>{const e=tickerItems[i];if(!e)return `<div class="muted">${i===0?"Još nema ulova":""}</div>`;const t=S.teams[e.t];
+    return `<div class="${t.cpu?"":"cro"}"><b class="num">${fmt(e.kg)} kg</b>${flagHTML(COUNTRIES[t.c][0])}${esc(tName(t))}<br><span class="muted">${HOURS[e.h]}, mjesto ${t.lake}</span></div>`}).join("");
+  renderTvTable(R);
+}
+function renderTvTable(R){
+  R=R||computeRanks();
+  const v=VIEWS[tblView];const base=S.snaps[Math.max(0,S.hour-1)]||null;
+  $("tvTblTitle").textContent=v==="N"?"Poredak država":"Sektor "+v;
+  $("tvDots").innerHTML=VIEWS.map((x,i)=>`<span class="${i===tblView?"on":""}">${x==="N"?"Države":x}</span>`).join("");
+  const delta=(now,prev)=>{if(prev==null||S.phase==="drawn")return `<td class="dl z">–</td>`;const d=prev-now;return d>0?`<td class="dl u">▲${d}</td>`:d<0?`<td class="dl d">▼${-d}</td>`:`<td class="dl z">–</td>`};
+  let h="";
+  if(v==="N"){
+    h=`<table><thead><tr><th>#</th><th></th><th>Država</th><th class="r">Bod.</th><th class="r">kg</th></tr></thead><tbody>`+R.nat.map((x,i)=>{const k="n"+x.ci,fl=lastRanks[k]&&lastRanks[k]!==i+1;lastRanks[k]=i+1;
+      return `<tr class="${x.ci===0?"cro":""} ${fl?"flash":""}"><td class="rk num">${i+1}</td>${delta(i+1,base&&base.n[x.ci])}<td class="name">${flagHTML(COUNTRIES[x.ci][0])}${COUNTRIES[x.ci][1]}</td><td class="r num">${x.pts.toLocaleString("hr-HR")}</td><td class="r num">${fmt(x.kg)}</td></tr>`}).join("")+`</tbody></table>`;
+  } else {
+    h=`<table><thead><tr><th>#</th><th></th><th>Tim</th><th class="r">Mj.</th><th class="r">Ribe</th><th class="r">kg</th></tr></thead><tbody>`+R.sector[v].map(t=>{const pl=R.team[t.id].place,k="t"+t.id,fl=lastRanks[k]&&lastRanks[k]!==pl;lastRanks[k]=pl;
+      return `<tr class="${t.cpu?"":"cro"} ${fl?"flash":""}"><td class="rk num">${pl}</td>${delta(pl,base&&base.t[t.id])}<td class="name">${flagHTML(COUNTRIES[t.c][0])}${esc(tName(t))}</td><td class="r num">${t.lake}</td><td class="r num">${R.fish[t.id]}</td><td class="r num">${fmt(R.kg[t.id])}</td></tr>`}).join("")+`</tbody></table>`;
+  }
+  $("tvTbl").innerHTML=h;
+}
+function renderTvFinal(){
+  const f=$("tvFinal");
+  if(!S||S.phase!=="done"){f.hidden=true;return}
+  const R=computeRanks(),cro=R.nat.findIndex(x=>x.ci===0)+1;
+  f.innerHTML=`<div class="box"><h1>Konačni poredak</h1><div class="podium">${R.nat.slice(0,3).map((x,i)=>`<div><span class="muted">${i+1}. mjesto</span><b>${flagHTML(COUNTRIES[x.ci][0])}${COUNTRIES[x.ci][1]}</b>${x.pts.toLocaleString("hr-HR")} bodova, ${fmt(x.kg)} kg</div>`).join("")}</div><p style="font-size:3vh">Hrvatska je završila na <b>${cro}. mjestu</b>.</p></div>`;
+  f.hidden=false;
+}
+function toast(t){const m=$("tvMsg");m.firstElementChild.textContent=t;m.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>m.hidden=true,3500)}
+function renderTv(){renderTvHeader();const k=S&&S.teams?S.teams.map(t=>t.lake).join(","):"";if(k!==pegsKey){pegsKey=k;renderPegs()}renderTvData();renderTvFinal();renderConn()}
+function initTv(){
+  document.documentElement.setAttribute("data-theme","dark");
+  $("tv").hidden=false;
+  buildMap();
+  try{S=JSON.parse(fetchStore(KEY_STATE)||"null")}catch(e){S=null}
+  if(S&&S.catches)tickerItems=S.catches.slice(-4).reverse().map(c=>({t:c.t,kg:c.kg,h:c.h}));
+  renderTv();
+  if(S&&S.phase==="hour")runTimer();
+  setInterval(()=>{if(!S||!S.teams)return;tblView=(tblView+1)%VIEWS.length;renderTvTable()},12000);
+  startHost();
+}
+
+/* ===================== MOBITEL ===================== */
+let mPeer=null,mConn=null,MS=null,mCode=null,retryT=null,sent={};
+function initMob(code){
+  $("mob").hidden=false;
+  mCode=code||fetchStore(KEY_LASTCODE);
+  renderMob();
+  if(mCode)connectMob();
+}
+function setMobConn(on,text){$("mConn").classList.toggle("on",on);$("mConn").querySelector("span").textContent=text}
+function connectMob(){
+  clearTimeout(retryT);
+  if(typeof Peer==="undefined"){setMobConn(false,"Nema servisa");renderMob("Servis za spajanje nije dostupan. Provjerite internet.");return}
+  store(KEY_LASTCODE,mCode);setMobConn(false,"Spajanje…");
+  const go=()=>{
+    try{if(mConn)mConn.close()}catch(e){}
+    mConn=mPeer.connect(PEER_PREFIX+mCode,{reliable:true,serialization:"json"});
+    mConn.on("open",()=>{setMobConn(true,"Spojeno s TV-om")});
+    mConn.on("data",d=>{if(d&&d.type==="state"){MS=d.s;sent={};renderMob()}});
+    mConn.on("close",()=>{setMobConn(false,"Veza prekinuta");retryT=setTimeout(go,2500)});
+    mConn.on("error",()=>{setMobConn(false,"Veza prekinuta");retryT=setTimeout(go,2500)});
+  };
+  if(mPeer&&!mPeer.destroyed&&mPeer.open)return go();
+  mPeer=new Peer({debug:0});
+  mPeer.on("open",go);
+  mPeer.on("error",err=>{
+    if(err.type==="peer-unavailable"){setMobConn(false,"TV nije pronađen");renderMob("TV s tim kodom nije pronađen. Provjerite je li aplikacija otvorena na televizoru i kod točan.");retryT=setTimeout(go,4000);return}
+    setMobConn(false,"Greška veze");
+  });
+  mPeer.on("disconnected",()=>{setTimeout(()=>{try{mPeer.reconnect()}catch(e){}},2000)});
+}
+function send(cmd){if(mConn&&mConn.open){mConn.send({type:"cmd",...cmd});return true}alert("Mobitel nije spojen s TV-om.");return false}
+function renderMob(note){
+  const b=$("mBody");
+  const h=MS&&MS.phase==="hour"?MS.hour:-1;
+  $("mHour").textContent=MS?(MS.phase==="done"?"Kraj":MS.phase==="hour"?HOURS[h]:"12h"):"–";
+  $("mPeriod").innerHTML=!MS?"Nije spojeno":MS.phase==="hour"?`${h+1}. od 24 sata<br>${isNight(h)?"Noć":"Dan"}`:MS.phase==="drawn"?"Prije starta":MS.phase==="done"?"Završeno":"Izvlačenje";
+  let x="";
+  if(!MS){
+    x=`<div class="card"><h2>Spajanje s televizorom</h2><p>Skenirajte QR kod s TV-a ili upišite kod koji piše ispod njega.</p>${note?`<p style="color:var(--down)">${esc(note)}</p>`:""}
+    <div class="codein"><input id="codeIn" inputmode="numeric" maxlength="5" placeholder="12345" value="${esc(mCode||"")}" aria-label="Kod s televizora"><button class="btn" id="codeGo">Spoji</button></div></div>`;
+  } else if(MS.phase==="none"){
+    x=`<div class="card"><h2>Novo natjecanje</h2><p>30 reprezentacija, 90 timova i 24 sata ribolova. Izvlačenje dodjeljuje svakoj državi po jednu poziciju u sektorima A, B i C.</p><button class="btn" data-cmd="draw">Izvuci pozicije</button></div>`;
+  } else if(MS.phase==="drawn"){
+    x=`<div class="card"><h2>Pozicije Hrvatske</h2><div class="poslist">${MS.cro.map(t=>`<div>${esc(t.name)}<br><span>Mjesto ${t.lake}, ploča PEG ${t.peg}, sektor ${t.sec}</span></div>`).join("")}</div>
+    <button class="btn" data-cmd="start">Počni natjecanje (12h)</button><button class="btn sec" data-cmd="draw" data-confirm="Izvući pozicije ponovno?">Izvuci ponovno</button></div>`;
+  } else if(MS.phase==="hour"){
+    x=`<div class="card"><h2>Upis za ${HOURS[h]}</h2>`+MS.cro.map(t=>`<div class="team"><div class="thead"><span class="tname">${esc(t.name)}</span><span class="tmeta">Mjesto ${t.lake}, PEG ${t.peg}, sektor ${t.sec}</span></div>`+
+      t.rods.map((kg,ri)=>{const r=ri+1,k=t.id+"_"+r;
+        if(kg!=null)return `<div class="rod"><label>Štap ${r}</label><div class="done"><span class="num">${fmt(kg)} kg</span><button data-del="${k}">Ukloni</button></div></div>`;
+        if(sent[k])return `<div class="rod"><label>Štap ${r}</label><div class="wait">Šaljem na TV…</div></div>`;
+        return `<div class="rod"><label for="w${k}">Štap ${r}</label><input id="w${k}" inputmode="decimal" placeholder="kg, npr. 14,37" autocomplete="off"><button class="ok" data-add="${k}">Upiši</button></div><div class="err" id="e${k}"></div>`}).join("")+`</div>`).join("")+
+      `<p class="muted" style="font-size:.85rem">Upišite težinu samo za štap na kojem je riba izvučena.</p></div>`+
+      `<button class="btn" data-cmd="next" ${MS.pending?`data-confirm="CPU ulovi se još prikazuju na TV-u (${MS.pending}). Završiti sat odmah?"`:""}>${h===23?"Završi natjecanje":`Završi sat, kreni u ${HOURS[h+1]}`}</button>`;
+  } else if(MS.phase==="done"){
+    x=`<div class="card"><h2>Natjecanje je završeno</h2><p>Hrvatska je na <b>${MS.nat.rank}. mjestu</b>.</p><button class="btn sec" data-cmd="draw" data-confirm="Započeti novo natjecanje? Rezultati ovog natjecanja bit će obrisani.">Novo natjecanje</button></div>`;
+  }
+  if(MS&&MS.cro){
+    x+=`<div class="card"><h2>Hrvatska uživo</h2><div class="summary"><div><b class="num">${MS.nat.rank}.</b><span>ukupno</span></div><div><b class="num">${MS.nat.pts.toLocaleString("hr-HR")}</b><span>bodova</span></div><div><b class="num">${fmt(MS.nat.kg)}</b><span>kg, ${MS.nat.fish} ${plRibe(MS.nat.fish)}</span></div></div>
+    <div class="summary">${MS.cro.map(t=>`<div><b class="num">${t.place}.</b><span>Sektor ${t.sec}, ${fmt(t.kg)} kg</span></div>`).join("")}</div></div>`;
+    x+=`<div class="card"><h2>Poredak država</h2><table><tbody>${MS.top.map(r=>`<tr class="${r.cro?"cro":""}"><td class="rk num">${r.r}</td><td class="name">${esc(r.name)}</td><td class="r num">${r.pts.toLocaleString("hr-HR")}</td><td class="r num">${fmt(r.kg)} kg</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  // sačuvaj započeti unos pri osvježavanju
+  const typed={};b.querySelectorAll("input[id^=w]").forEach(i=>{if(i.value)typed[i.id]=i.value});
+  b.innerHTML=x;
+  for(const id in typed){const i=$(id);if(i)i.value=typed[id]}
+  const cg=$("codeGo");if(cg){const go=()=>{const v=$("codeIn").value.replace(/\D/g,"");if(v.length!==5){alert("Kod ima 5 znamenki.");return}mCode=v;connectMob()};cg.onclick=go;$("codeIn").onkeydown=e=>{if(e.key==="Enter")go()}}
+  b.querySelectorAll("[data-cmd]").forEach(el=>el.onclick=()=>{if(el.dataset.confirm&&!confirm(el.dataset.confirm))return;send({action:el.dataset.cmd})});
+  b.querySelectorAll("[data-add]").forEach(el=>{const [t,r]=el.dataset.add.split("_").map(Number),k=el.dataset.add,inp=$("w"+k);
+    const go=()=>{const v=parseFloat(inp.value.replace(",",".").trim());if(!(v>0&&v<=40)){$("e"+k).textContent="Upišite težinu između 0,01 i 40 kg.";return}
+      if(send({action:"add",t,rod:r,kg:Math.round(v*100)/100})){sent[k]=true;renderMob()}};
+    el.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()}});
+  b.querySelectorAll("[data-del]").forEach(el=>{const [t,r]=el.dataset.del.split("_").map(Number);el.onclick=()=>send({action:"del",t,rod:r})});
+}
+
+/* ===================== START ===================== */
+const qs=new URLSearchParams(location.search);
+if(qs.has("c"))initMob(qs.get("c").replace(/\D/g,"").slice(0,5));
+else if(qs.has("tv"))initTv();
+else{
+  $("role").hidden=false;
+  $("pickTv").onclick=()=>{$("role").hidden=true;initTv()};
+  $("pickMob").onclick=()=>{$("role").hidden=true;initMob()};
+}
+</script>
+</body>
+</html>
