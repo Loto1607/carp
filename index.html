@@ -133,8 +133,8 @@ tr.gap td{border-top:none;text-align:center;color:var(--muted);padding:0;line-he
 .peg.cro .fbox{stroke:var(--cro);stroke-width:2.5}
 .peg.hit .flag{transform:scale(1.9);filter:drop-shadow(0 0 4px #fff)}
 .peg.hit .fbox{stroke:#fff;stroke-width:1.6}
-.ccode{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:11px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;opacity:.85}
-.peg.cro .ccode{fill:var(--cro);opacity:1}
+.ccode{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:12px;fill:#fff;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:#1d3318;stroke-width:3.2px;stroke-linejoin:round}
+.peg.cro .ccode{fill:#fff;stroke:var(--cro)}
 .seclabel{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;text-anchor:middle;dominant-baseline:central;opacity:.7}
 .ripple{fill:none;stroke:#fff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:rip 1.6s ease-out forwards}
 .ripple.d{animation-delay:.25s;opacity:0}
@@ -214,7 +214,7 @@ tr.gap td{border-top:none;text-align:center;color:var(--muted);padding:0;line-he
  </div>
  <div class="tvbars"><div class="hours" id="tvHours"></div><div class="progress"><i id="tvProg"></i></div></div>
  <div class="tvmap">
-  <div class="mapwrap"><svg id="map" viewBox="-20 -30 1040 1130" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Karta jezera"></svg></div>
+  <div class="mapwrap"><svg id="map" viewBox="0 -15 1000 1150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Karta jezera"></svg></div>
   <div class="tvticker" id="tvTicker" hidden></div>
   <div class="panel qrfloat" id="tvQr">
    <div class="qrbox"><div id="qr"></div><div><p>Skenirajte mobitelom ili upišite kod:</p><div class="code num" id="tvCode">-----</div><p class="muted" id="tvNet">Spajanje na mrežu…</p></div></div>
@@ -290,7 +290,7 @@ const FLAGS={
  LUX:hz("#EF3340","#fff","#00A3E0")
 };
 
-const LAKE="M500 70C680 60 860 140 880 300C895 420 800 470 830 580C870 720 900 860 760 950C640 1025 470 990 360 1000C220 1012 110 940 120 800C128 690 210 640 180 520C150 400 90 300 170 180C240 90 370 75 500 70Z";
+const LAKE="M500 70C730 70 890 180 895 380C898 480 885 540 885 600C885 670 898 730 892 840C882 1000 720 1050 500 1050C280 1050 118 1000 108 840C102 730 115 670 115 600C115 540 102 480 105 380C110 180 270 70 500 70Z";
 
 /* ===================== IGRA (radi na televizoru) ===================== */
 // kvaliteta polja kao u Excelu (ispravljeno: noću se gleda noćna vrijednost)
@@ -439,7 +439,7 @@ function buildMap(){
   const svg=$("map");
   svg.innerHTML=`<defs><radialGradient id="wg" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="var(--w1)"/><stop offset="1" stop-color="var(--w2)"/></radialGradient>
   <radialGradient id="wgn" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="#1A3F5C"/><stop offset="1" stop-color="#081826"/></radialGradient>${Object.keys(FLAGS).map(k=>`<symbol id="f-${k}" viewBox="0 0 30 20" preserveAspectRatio="none">${FLAGS[k]}</symbol>`).join("")}</defs>
-  <rect x="-20" y="-30" width="1040" height="1130" fill="var(--bank)"/>
+  <rect x="0" y="-15" width="1000" height="1150" fill="var(--bank)"/>
   <path id="lake" d="${LAKE}" fill="url(#wg)" stroke="var(--reed)" stroke-width="10" stroke-linejoin="round"/>
   <g id="secarcs"></g>
   <g><ellipse cx="500" cy="560" rx="62" ry="40" fill="var(--bank)" stroke="var(--reed)" stroke-width="5"/><circle cx="484" cy="552" r="13" fill="var(--reed)"/><circle cx="514" cy="558" r="10" fill="var(--reed)"/></g>
@@ -449,8 +449,8 @@ function buildMap(){
   const inside=(x,y)=>{try{const p=svg.createSVGPoint();p.x=x;p.y=y;return lake.isPointInFill(p)}catch(e){return Math.hypot(x-500,y-540)<250}};
   const at=(s,off)=>{const a=lake.getPointAtLength((s+L)%L),b=lake.getPointAtLength((s+L-2)%L),c=lake.getPointAtLength((s+2)%L);
     let nx=c.y-b.y,ny=-(c.x-b.x);const m=Math.hypot(nx,ny)||1;nx/=m;ny/=m;if(inside(a.x+nx*6,a.y+ny*6)){nx=-nx;ny=-ny}
-    return{x:a.x+nx*off,y:a.y+ny*off,wx:a.x-nx*42,wy:a.y-ny*42}};
-  PEGPOS=[];for(let i=0;i<90;i++){const s=(i+.5)/90*L;PEGPOS.push({...at(s,19),f:at(s,46),k:at(s,67)})}
+    return{x:a.x+nx*off,y:a.y+ny*off,wx:a.x-nx*42,wy:a.y-ny*42,nx,ny}};
+  PEGPOS=[];for(let i=0;i<90;i++){const s=(i+.5)/90*L;const f=at(s,46),ax=Math.abs(f.nx),ay=Math.abs(f.ny);PEGPOS.push({...at(s,19),f,k:at(s,46+14*ax+9.5*ay+3+12*ax+6.5*ay)})}
   $("secl").innerHTML=SECT.map((s,k)=>{const p=at((k+.5)/3*L,-90);return `<text class="seclabel" x="${p.x}" y="${p.y}" fill="var(--${s})">${s}</text>`}).join("");
 }
 function renderPegs(){
